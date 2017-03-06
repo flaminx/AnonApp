@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
             tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(PAGE_LIMIT);
         viewPager.setCurrentItem(1);
+
+
     }
 
 
