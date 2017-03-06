@@ -13,6 +13,8 @@
     <string name="retry">Retry</string>
     <string name="quit">Quit</string>
 
+    <string name="test">Test</string>
+
     <string name="friendly_error">Uh-oh!</string>
     <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
 </resources>
