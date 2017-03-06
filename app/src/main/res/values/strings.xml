@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">AnonApp</string>
+
+    <string-array name="tab_array">
+        <item>User</item>
+        <item>Posts</item>
+        <item>Options</item>
+    </string-array>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="retry">Retry</string>
+    <string name="quit">Quit</string>
+
+    <string name="friendly_error">Uh-oh!</string>
+    <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
+</resources>
