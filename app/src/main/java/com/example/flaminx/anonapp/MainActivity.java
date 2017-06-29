@@ -4,10 +4,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.example.flaminx.anonapp.Fragments.AppFragmentPagerAdapter;
+import com.example.flaminx.anonapp.Pojo.FragmentInterface;
 
-public class MainActivity extends AppCompatActivity {
+import org.w3c.dom.Text;
+
+public class MainActivity extends AppCompatActivity implements FragmentInterface {
 
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -25,8 +29,12 @@ public class MainActivity extends AppCompatActivity {
             tabLayout.setupWithViewPager(viewPager);
         viewPager.setOffscreenPageLimit(PAGE_LIMIT);
         viewPager.setCurrentItem(1);
+    }
 
-
+    public void showUpoints(int n)
+    {
+        TextView uPoints = (TextView)findViewById(R.id.pointCount);
+        uPoints.setText(Integer.toString(n));
     }
 
 

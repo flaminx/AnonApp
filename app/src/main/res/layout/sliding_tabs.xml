@@ -1,21 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed" />
+        app:tabMode="fixed"
 
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    </android.support.design.widget.AppBarLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
-        android:background="@android:color/white" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:clickable="true"
+        android:layout_gravity="right"
+        android:layout_marginBottom="37dp"
+        android:layout_marginRight="37dp"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:id="@+id/floatingActionButton"
+        app:layout_anchor="@id/viewpager"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:fabSize="normal" />
+
+
+
+
+</android.support.design.widget.CoordinatorLayout>

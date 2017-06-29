@@ -3,10 +3,12 @@ package com.example.flaminx.anonapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.example.flaminx.anonapp.Pojo.NetworkCheck;
 
@@ -55,6 +57,30 @@ public class SplashActivity extends  AppCompatActivity {
         }
 
         else{
+
+            int cVersion = BuildConfig.VERSION_CODE;
+            SharedPreferences sPrefs = getSharedPreferences("com.example.flaminx.anonapp",MODE_PRIVATE);
+            int oVersion = sPrefs.getInt("anon_version",-1);
+
+
+            //Normal run
+            if(cVersion == oVersion)
+            {
+                Toast toast = Toast.makeText(this,"Normal Run",Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            else if(oVersion == -1)
+            {
+                Toast toast = Toast.makeText(this,"First Run",Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            else if(cVersion > oVersion)
+            {
+
+            }
+
+
+            sPrefs.edit().putInt("anon_version",cVersion).apply();
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
             finish();

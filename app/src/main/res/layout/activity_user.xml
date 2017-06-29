@@ -1,59 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:layout_marginTop="200dp"
-    android:orientation="vertical">
-    <TextView
-        android:id="@android:id/empty"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/horizontal_divider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:text="POINTS">
-    </TextView>
+        android:layout_height="0dp"
+        android:layout_centerVertical="true" />
+
+    <View
+        android:id="@+id/vertical_divider"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
-        android:layout_marginTop="50dp"
+        android:id="@+id/PointsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1.22"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/horizontal_divider"
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/pointCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:text="Error">
+        </TextView>
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:text="POINTS">
+        </TextView>
 
-        >
-        <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/userPosts"
-            android:background="@drawable/circle_button"
-            android:elevation="10dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            style="@android:style/Widget.Button" />
-        <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle_button"
-            android:id="@+id/userAchievements"
-            android:layout_marginTop="50dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            style="@android:style/Widget.Button" />
-
-        <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle_button"
-            android:id="@+id/button"
-            android:layout_weight="1"
-            style="@android:style/Widget.Button" />
 
     </LinearLayout>
 
 
+    <LinearLayout
+    android:id="@+id/CommentsLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/horizontal_divider"
+    android:layout_alignLeft="@id/vertical_divider"
+    android:orientation="vertical">
+
+    <Button
+
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/userComments"
+        android:background="@drawable/comments"
+
+        android:gravity="center_vertical|center_horizontal"
+        style="@android:style/Widget.Button" />
 </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/PostsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/horizontal_divider"
+        android:layout_alignRight="@id/vertical_divider"
+        android:orientation="vertical">
+
+        <Button
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/userPosts"
+            android:background="@drawable/posts"
+
+            android:gravity="center_vertical|center_horizontal"
+            style="@android:style/Widget.Button" />
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

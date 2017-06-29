@@ -5,7 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.flaminx.anonapp.Pojo.FragmentInterface;
 import com.example.flaminx.anonapp.R;
 
 /**
@@ -36,7 +40,27 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user, container, false);
 
-
         return view;
     }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                FragmentInterface ufi = (FragmentInterface) getActivity();
+                int n = 0;
+                while (n < 500)
+                {
+                    ufi.showUpoints(n);
+                    n++;
+                }
+            }
+
+        };
+        Thread mythread = new Thread(runnable);
+        mythread.start();
+
+    }
+
 }
