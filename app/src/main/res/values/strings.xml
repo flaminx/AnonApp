@@ -7,14 +7,24 @@
         <item>Options</item>
     </string-array>
 
+    <!-- general use strings -->
     <string name="yes">Yes</string>
     <string name="no">No</string>
-
     <string name="retry">Retry</string>
     <string name="quit">Quit</string>
-
     <string name="test">Test</string>
-
+    <string name="next">Next</string>
+    <!-- error strings -->
     <string name="friendly_error">Uh-oh!</string>
     <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
+    <!-- Tutorial Text-->
+    <string name="TutorialTitle">Welcome to Anon!</string>
+    <string name="TutorialText1">This tutorial will get you up to speed with the app</string>
+    <string name="TutorialText2">Are you sure? Tutorial can be restarted from options menu</string>
+
+    <string name="TutorialText3">Swiping left lets you see your user page</string>
+
+    <string name="TutorialText4">The user page lets you see your posts, comments and user score </string>
+    <string name="TutorialText5">Swiping right lets you see the options menu</string>
+    <string name="TutorialText6">The page you are on shows everyones posts</string>
 </resources>

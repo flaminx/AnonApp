@@ -1,15 +1,15 @@
 package com.example.flaminx.anonapp.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.flaminx.anonapp.Pojo.FragmentInterface;
 import com.example.flaminx.anonapp.R;
 
 /**
@@ -20,6 +20,11 @@ public class UserFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
 
     private int mPage;
+    private Handler dynUiHandler;
+    private TextView uPointsUI;
+    private int uPointsValue;
+    private int usersPoints;
+    private int delay = 1;
 
     public static UserFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -39,28 +44,48 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user, container, false);
-
+    uPointsUI = (TextView) view.findViewById(R.id.pointCount);
+        uPointsValue = 0; // Update with real User Points
+        usersPoints = 1631;
+        dynUiHandler = new Handler();
         return view;
     }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                FragmentInterface ufi = (FragmentInterface) getActivity();
-                int n = 0;
-                while (n < 500)
-                {
-                    ufi.showUpoints(n);
-                    n++;
-                }
-            }
-
-        };
-        Thread mythread = new Thread(runnable);
-        mythread.start();
-
+        if (isVisibleToUser) {
+            uPointsUI.setText(Integer.toString(uPointsValue));
+            Toast toast = Toast.makeText(getActivity(),"Visible",Toast.LENGTH_SHORT);
+            toast.show();
+            dynUiHandler.post(pointsUpdate);
+        }
+        else {
+           uPointsValue = 0;
+        }
     }
+
+
+    private Runnable pointsUpdate = new Runnable() {
+        @Override
+        public void run() {
+            uPointsUI.setText(Integer.toString(uPointsValue));
+
+            if(uPointsValue < usersPoints) {
+                if((usersPoints - 100 <= 0)||((usersPoints-uPointsValue) * 0.05) < 1)
+                {
+                    delay++;
+                    uPointsValue++;
+                }
+                else uPointsValue += (usersPoints-uPointsValue) * 0.05;
+
+
+                dynUiHandler.postDelayed(this,delay);
+
+            }
+            else delay = 1;
+
+        }
+    };
 
 }

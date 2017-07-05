@@ -18,10 +18,12 @@ import com.example.flaminx.anonapp.Pojo.NetworkCheck;
 
 public class SplashActivity extends  AppCompatActivity {
     Context c = this;
+    private int runstate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        super.onCreate(savedInstanceState);
 
+        runstate = -1;
         setupApp();
     }
 
@@ -68,20 +70,23 @@ public class SplashActivity extends  AppCompatActivity {
             {
                 Toast toast = Toast.makeText(this,"Normal Run",Toast.LENGTH_SHORT);
                 toast.show();
+                runstate = 0;
             }
             else if(oVersion == -1)
             {
                 Toast toast = Toast.makeText(this,"First Run",Toast.LENGTH_SHORT);
                 toast.show();
+                runstate = 1;
             }
             else if(cVersion > oVersion)
             {
-
+                runstate = 2;
             }
 
 
             sPrefs.edit().putInt("anon_version",cVersion).apply();
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            intent.putExtra("runstate",runstate);
             startActivity(intent);
             finish();
         }

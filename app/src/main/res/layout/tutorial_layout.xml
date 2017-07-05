@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+
+    android:background="@drawable/curved_popup"
+    android:fadingEdge="horizontal|vertical"
+    android:fadingEdgeLength="5dp">
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp"
+        android:id="@+id/PopupTitle" />
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:layout_marginTop='30dp'
+        android:layout_below="@id/PopupTitle"
+        android:id="@+id/PopupText" />
+
+
+
+
+    <View android:id="@+id/dummy"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp"
+        />
+
+    <Button
+
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignLeft="@id/dummy"
+        android:layout_below="@id/PopupText"
+        android:text="@string/quit"
+        android:id="@+id/popupQuit"
+        />
+
+    <Button
+
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/PopupText"
+        android:text="@string/next"
+        android:id="@+id/popupNext"
+        />
+</RelativeLayout>
