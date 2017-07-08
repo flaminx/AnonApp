@@ -39,6 +39,7 @@ public class Post {
     private String postText;
     private DateFormat df;
     private Date jvDate;
+    private int postScore;
 
     public String getPostDate() {
         return postDate;
@@ -49,6 +50,15 @@ public class Post {
     }
 
     private String postDate;
+
+    public int getPostScore() {
+        return postScore;
+    }
+
+    public void setPostScore(int postScore) {
+        this.postScore = postScore;
+    }
+
     public Post(int i)
     {
         postTitle = "John Sucks" + i;
@@ -57,5 +67,6 @@ public class Post {
         df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         jvDate = new Date();
         postDate = df.format(jvDate);
+        postScore = 0;
     }
 }

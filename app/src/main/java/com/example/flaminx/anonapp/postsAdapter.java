@@ -2,6 +2,7 @@ package com.example.flaminx.anonapp;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.flaminx.anonapp.Pojo.Post;
 
@@ -27,12 +29,10 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     private int lastObject = -1;
     private int animCutoff;
     private View inflatedView;
-    private int pattern;
     public postsAdapter(ArrayList<Post> input)
     {
         animCutoff = input.size();
         postObject = input;
-        pattern = 0;
     }
 
 
@@ -48,10 +48,23 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
 
        Post rowPost = postObject.get(position);
         holder.bind(rowPost);
-        setColour(holder.itemView);
         setAnimation(holder.itemView,position);
 
 
+    }
+    public void addVote(int pos)
+    {
+        Post rowPost = postObject.get(pos);
+        rowPost.setPostScore(rowPost.getPostScore() + 1);
+        postObject.remove(pos);
+        postObject.add(pos,rowPost);
+    }
+    public void removeVote(int pos)
+    {
+        Post rowPost = postObject.get(pos);
+        rowPost.setPostScore(rowPost.getPostScore() - 1);
+        postObject.remove(pos);
+        postObject.add(pos,rowPost);
     }
 
     public void addAll(ArrayList<Post> update) {
@@ -71,29 +84,9 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
         }
     }
 
-    private void setColour(View v)
-    {
-        switch (pattern)
-        {
-            case 0:
-                v.setBackgroundColor(Color.parseColor("#3a3a3a"));
-                break;
-            case 1:
-                v.setBackgroundColor(Color.parseColor("#474747"));
-                break;
-            case 2:
-                v.setBackgroundColor(Color.parseColor("#5e5e5e"));
-                break;
-            case 3:
-                v.setBackgroundColor(Color.parseColor("#7a7a7a"));
-                break;
-        }
-        if(pattern < 3)
-        {
-            pattern++;
-        }
-        else pattern = 0;
-    }
+
+
+
 
     @Override
     public int getItemCount() {
@@ -105,6 +98,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
         private TextView postTitle;
         private TextView postBlurb;
         private TextView postDate;
+        private TextView postScore;
 
         public ViewHolder(View v, int count)
         {
@@ -112,8 +106,12 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             postTitle = (TextView) v.findViewById(R.id.post_title);
             postBlurb = (TextView) v.findViewById(R.id.post_blurb);
             postDate = (TextView) v.findViewById(R.id.date);
-
+            postScore = (TextView) v.findViewById(R.id.post_score);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                v.setElevation(10);
+            }
             v.setOnClickListener(this);
+
         }
 
         @Override
@@ -125,6 +123,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             postTitle.setText(post.getPostTitle());
             postBlurb.setText(post.getPostBlurb());
             postDate.setText(post.getPostDate());
+            postScore.setText(Integer.toString(post.getPostScore()));
         }
     }
 

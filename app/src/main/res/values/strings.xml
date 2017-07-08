@@ -21,10 +21,11 @@
     <string name="TutorialTitle">Welcome to Anon!</string>
     <string name="TutorialText1">This tutorial will get you up to speed with the app</string>
     <string name="TutorialText2">Are you sure? Tutorial can be restarted from options menu</string>
-
-    <string name="TutorialText3">Swiping left lets you see your user page</string>
-
-    <string name="TutorialText4">The user page lets you see your posts, comments and user score </string>
-    <string name="TutorialText5">Swiping right lets you see the options menu</string>
-    <string name="TutorialText6">The page you are on shows everyones posts</string>
+    <string name="TutorialText3">The left tab lets you see your user page</string>
+    <string name="TutorialText4">The user page shows your posts, comments and user score </string>
+    <string name="TutorialText5">The right tab lets you see the options menu</string>
+    <string name="TutorialText6">The options menu allows you to change settings and show the tutorial again</string>
+    <string name="TutorialText7">The page you are on shows everyones posts</string>
+    <!--Options Menu Tex -->
+    <string name="showTutorial">Show Tutorial</string>
 </resources>

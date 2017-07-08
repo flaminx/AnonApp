@@ -11,4 +11,9 @@
     <style name="splashScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splashtest</item>
     </style>
+
+    <style name="AnimationPopup">
+        <item name="android:windowEnterAnimation">@anim/appear</item>
+        <item name="android:windowExitAnimation">@anim/dissapear</item>
+    </style>
 </resources>

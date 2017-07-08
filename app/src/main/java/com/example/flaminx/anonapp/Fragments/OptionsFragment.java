@@ -5,8 +5,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.flaminx.anonapp.R;
+import com.example.flaminx.anonapp.Tutorial;
 
 /**
  * Created by Flaminx on 05/03/2017.
@@ -34,9 +36,24 @@ public class OptionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_options, container, false);
+        final View view = inflater.inflate(R.layout.activity_options, container, false);
+        final View parent = view.findViewById(R.id.activity_options);
+        final Button tutButton = (Button) view.findViewById(R.id.tutorial_button);
 
 
+
+        view.findViewById(R.id.activity_options).post(new Runnable() {
+            public void run() {
+                tutButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Tutorial t = new Tutorial(getActivity(),parent);
+                        t.beginTutorial();
+
+                    }
+                });
+            }
+        });
         return view;
     }
 }

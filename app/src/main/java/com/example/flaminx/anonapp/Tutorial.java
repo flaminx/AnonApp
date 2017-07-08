@@ -45,8 +45,9 @@ public class Tutorial {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tutorialPopup.setElevation(5);
         }
-
-        tutorialPopup.showAtLocation(parentView.findViewById(R.id.Main_layout), Gravity.CENTER,0,0);
+        tutorialPopup.setFocusable(true);
+        tutorialPopup.setAnimationStyle(R.style.AnimationPopup);
+        tutorialPopup.showAtLocation(parentView, Gravity.CENTER,0,0);
 
         TextView tTitle = (TextView) customView.findViewById(R.id.PopupTitle);
         final TextView tText = (TextView) customView.findViewById(R.id.PopupText);
@@ -84,6 +85,9 @@ public class Tutorial {
                         break;
                     case 6:
                         tText.setText(R.string.TutorialText6);
+                        break;
+                    case 7:
+                        tText.setText(R.string.TutorialText7);
                         break;
                     default:
                         tutorialPopup.dismiss();

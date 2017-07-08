@@ -12,7 +12,7 @@ import com.example.flaminx.anonapp.Fragments.AppFragmentPagerAdapter;
 
 public class MainActivity extends AppCompatActivity  {
 
-    private ViewPager viewPager;
+    private customViewPager viewPager;
     private TabLayout tabLayout;
     private final int PAGE_LIMIT = 3;
     private int runstate;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity  {
         parent = findViewById(R.id.Main_layout);
         runstate = getIntent().getIntExtra("runstate",-1);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (customViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new AppFragmentPagerAdapter(getSupportFragmentManager(), MainActivity.this));
             // Give the TabLayout the ViewPager
             tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
