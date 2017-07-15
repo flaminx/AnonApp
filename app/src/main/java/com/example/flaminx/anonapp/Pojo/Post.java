@@ -37,9 +37,18 @@ public class Post {
     private String postTitle;
     private String postBlurb;
     private String postText;
-    private DateFormat df;
-    private Date jvDate;
+    private String postDate;
     private int postScore;
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
+    private int postId;
 
     public String getPostDate() {
         return postDate;
@@ -49,7 +58,7 @@ public class Post {
         this.postDate = postDate;
     }
 
-    private String postDate;
+
 
     public int getPostScore() {
         return postScore;
@@ -59,14 +68,13 @@ public class Post {
         this.postScore = postScore;
     }
 
-    public Post(int i)
+    public Post()
     {
-        postTitle = "John Sucks" + i;
-        postBlurb = "Blah blah...";
-        postText = "Blah blah Blah";
-        df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        jvDate = new Date();
-        postDate = df.format(jvDate);
+        postTitle = "";
+        postBlurb = "";
+        postText = "";
+        postDate = "";
         postScore = 0;
+        postId = -1;
     }
 }

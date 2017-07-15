@@ -54,6 +54,8 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     }
     public void addVote(int pos)
     {
+
+
         Post rowPost = postObject.get(pos);
         rowPost.setPostScore(rowPost.getPostScore() + 1);
         postObject.remove(pos);

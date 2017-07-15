@@ -45,6 +45,7 @@ public class Tutorial {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             tutorialPopup.setElevation(5);
         }
+        tutorialPopup.setOutsideTouchable(false);
         tutorialPopup.setFocusable(true);
         tutorialPopup.setAnimationStyle(R.style.AnimationPopup);
         tutorialPopup.showAtLocation(parentView, Gravity.CENTER,0,0);
