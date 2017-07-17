@@ -14,9 +14,16 @@
     <string name="quit">Quit</string>
     <string name="test">Test</string>
     <string name="next">Next</string>
+    <string name="submit">Submit</string>
+    <string name="back">Back</string>
+    <string name="Filter">FILTER</string>
     <!-- error strings -->
     <string name="friendly_error">Uh-oh!</string>
     <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
+    <string name="timeout">Could not find server, do you have internet?</string>
+    <string name="post_cooldown">You\'re posting too fast! please wait a minute</string>
+    <string name="ohMyGodThisShouldntHappen">Authentication Failure, please restart</string>
+    <string name="Oops">Oops our bad, try again later</string>
     <!-- Tutorial Text-->
     <string name="TutorialTitle">Welcome to Anon!</string>
     <string name="TutorialText1">This tutorial will get you up to speed with the app</string>

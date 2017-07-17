@@ -26,6 +26,16 @@ public class AnonApp extends Application {
     }
 
     private String userId;
+
+    public int getUserScore() {
+        return userScore;
+    }
+
+    public void setUserScore(int userScore) {
+        this.userScore = userScore;
+    }
+
+    private int userScore = -1;
     private static AnonApp instance;
     private static RequestQueue reqQ;
     @Override

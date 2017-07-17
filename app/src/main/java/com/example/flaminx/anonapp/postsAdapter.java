@@ -1,6 +1,7 @@
 package com.example.flaminx.anonapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -24,11 +25,12 @@ import java.util.ArrayList;
 
 public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
 
-    private Context context;
+
     private ArrayList<Post> postObject;
     private int lastObject = -1;
     private int animCutoff;
     private View inflatedView;
+
     public postsAdapter(ArrayList<Post> input)
     {
         animCutoff = input.size();
@@ -54,8 +56,6 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     }
     public void addVote(int pos)
     {
-
-
         Post rowPost = postObject.get(pos);
         rowPost.setPostScore(rowPost.getPostScore() + 1);
         postObject.remove(pos);
@@ -101,6 +101,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
         private TextView postBlurb;
         private TextView postDate;
         private TextView postScore;
+        private Post mPost;
 
         public ViewHolder(View v, int count)
         {
@@ -118,10 +119,20 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
 
         @Override
         public void onClick(View v) {
+            Context context = itemView.getContext();
+            Intent postIntent = new Intent(context,PostActivity.class);
+            postIntent.putExtra("title",mPost.getPostTitle());
+            postIntent.putExtra("text",mPost.getPostText());
+            postIntent.putExtra("id",mPost.getPostId());
+            context.startActivity(postIntent);
+
+
+
 
         }
         public void bind(Post post)
         {
+            mPost = post;
             postTitle.setText(post.getPostTitle());
             postBlurb.setText(post.getPostBlurb());
             postDate.setText(post.getPostDate());

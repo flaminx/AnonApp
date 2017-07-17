@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.R;
 
 /**
@@ -38,6 +40,8 @@ public class UserFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
+
+
     }
 
     @Override
@@ -45,9 +49,11 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user, container, false);
     uPointsUI = (TextView) view.findViewById(R.id.pointCount);
-        uPointsValue = 0; // Update with real User Points
-        usersPoints = 1631;
+        uPointsValue = 0;
+        usersPoints = AnonApp.getInstance().getUserScore();
         dynUiHandler = new Handler();
+        Button getPosts = (Button) view.findViewById(R.id.userPosts);
+        Button getComments = (Button) view.findViewById(R.id.userComments);
         return view;
     }
     @Override

@@ -14,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -71,8 +74,7 @@ public class PostsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_posts, container, false);
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(view.getContext());
+
 
 
         postAdapter = new postsAdapter(postList);
@@ -82,16 +84,15 @@ public class PostsFragment extends Fragment {
         posts.setLayoutManager(postsLayout);
         posts.setAdapter(postAdapter);
         postFilter = (Toolbar) view.findViewById(R.id.postFilter);
-        postFilter.setTitle("FILTER");
+        postFilter.setTitle(R.string.Filter);
         postRefresher = (SwipeRefreshLayout) view.findViewById(R.id.refreshPosts);
 
         postRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                refresh();
+
+                getPosts(postAdapter);
+                postRefresher.setRefreshing(false);
             }
         });
         setRecyclerViewItemTouchListener();
@@ -105,11 +106,6 @@ public class PostsFragment extends Fragment {
 
     }
 
-    public void refresh() {
-
-        getPosts(postAdapter);
-        postRefresher.setRefreshing(false);
-    }
 
     private void setRecyclerViewItemTouchListener() {
 
@@ -145,62 +141,63 @@ public class PostsFragment extends Fragment {
     private void getPosts(final postsAdapter adapter) {
         String url = "http://192.168.10.27:80/posts";
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET,url,
-                null,new Response.Listener<JSONObject>() {
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
+                null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray Jpost = null;
-                            Jpost = response.getJSONArray("data");
-                            boolean exists = false;
-                            int loc = 0;
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray Jpost = null;
+                    Jpost = response.getJSONArray("data");
+                    boolean exists = false;
+                    int loc = 0;
 
-                            for (int i = 0; i < Jpost.length(); i++) {
+                    for (int i = 0; i < Jpost.length(); i++) {
 
-                                JSONObject cPost = Jpost.getJSONObject(i);
-                                for(int j = 0; j < postList.size();j++)
-                                {
-                                    if(cPost.getInt("id") == postList.get(j).getPostId())
-                                    {
-                                        exists = true;
-                                        loc = j;
-                                        break;
-                                    }
-                                }
-                                if(!exists) {
-                                    Post tempPost = new Post();
-                                    tempPost.setPostTitle(cPost.getString("title"));
-                                    if (cPost.getString("text").length() > 20) {
-                                        tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
-                                    } else tempPost.setPostBlurb(cPost.getString("text"));
-                                    tempPost.setPostText(cPost.getString("text"));
-                                    tempPost.setPostScore(cPost.getInt("votes"));
-                                    tempPost.setPostDate(cPost.getString("created_at"));
-                                    tempPost.setPostId(cPost.getInt("id"));
-                                    postList.add(tempPost);
-                                }
-                                else if(exists)
-                                {
-                                    postList.get(loc).setPostScore(cPost.getInt("votes"));
-                                }
-                                exists = false;
-                                loc = 0;
+                        JSONObject cPost = Jpost.getJSONObject(i);
+                        for (int j = 0; j < postList.size(); j++) {
+                            if (cPost.getInt("id") == postList.get(j).getPostId()) {
+                                exists = true;
+                                loc = j;
+                                break;
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                        adapter.notifyDataSetChanged();
-
+                        if (!exists) {
+                            Post tempPost = new Post();
+                            tempPost.setPostTitle(cPost.getString("title"));
+                            if (cPost.getString("text").length() > 20) {
+                                tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
+                            } else tempPost.setPostBlurb(cPost.getString("text"));
+                            tempPost.setPostText(cPost.getString("text"));
+                            tempPost.setPostScore(cPost.getInt("votes"));
+                            tempPost.setPostDate(cPost.getString("created_at"));
+                            tempPost.setPostId(cPost.getInt("id"));
+                            postList.add(0,tempPost);
+                        } else if (exists) {
+                            postList.get(loc).setPostScore(cPost.getInt("votes"));
+                        }
+                        exists = false;
+                        loc = 0;
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                adapter.notifyDataSetChanged();
+
+            }
 
 
-                }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
 
 
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                if (error instanceof ServerError) {
+                    Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                } else if (error instanceof TimeoutError) {
+                    Toast.makeText(getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                }
             }
 
 
