@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.flaminx.anonapp.R;
-import com.example.flaminx.anonapp.Tutorial;
+import com.example.flaminx.anonapp.Middleware.Tutorial;
 
 /**
  * Created by Flaminx on 05/03/2017.

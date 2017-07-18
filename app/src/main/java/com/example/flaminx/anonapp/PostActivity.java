@@ -1,9 +1,12 @@
 package com.example.flaminx.anonapp;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,17 +16,15 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.flaminx.anonapp.Middleware.commentAdapter;
 import com.example.flaminx.anonapp.Pojo.Comment;
-import com.example.flaminx.anonapp.Pojo.Post;
+import com.example.flaminx.anonapp.Writers.commentWriter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import static java.security.AccessController.getContext;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class PostActivity extends AppCompatActivity {
 
         TextView title = (TextView) findViewById(R.id.activityPostTitle);
         TextView text = (TextView) findViewById(R.id.activityPostText);
-
+        final View parent = findViewById(R.id.activity_comment);
         postId = getIntent().getIntExtra("id",-1);
         title.setText(getIntent().getStringExtra("title"));
         text.setText(getIntent().getStringExtra("text"));
@@ -53,6 +54,28 @@ public class PostActivity extends AppCompatActivity {
         commentList.add(c);
         cAdapter.notifyDataSetChanged();
         getComments(cAdapter,postId);
+
+        Button addComment = (Button) findViewById(R.id.addcomment);
+
+        addComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                commentWriter c = new commentWriter(getApplicationContext(),parent);
+                c.writePost(postId);
+            }
+        });
+
+
+        final SwipeRefreshLayout commentRefresher = (SwipeRefreshLayout) findViewById(R.id.refreshComments);
+
+        commentRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                getComments(cAdapter,postId);
+                commentRefresher.setRefreshing(false);
+            }
+        });
     }
 
 

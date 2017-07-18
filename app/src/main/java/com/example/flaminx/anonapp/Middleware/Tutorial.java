@@ -1,4 +1,4 @@
-package com.example.flaminx.anonapp;
+package com.example.flaminx.anonapp.Middleware;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.view.ViewGroup.LayoutParams;
+
+import com.example.flaminx.anonapp.R;
+
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 

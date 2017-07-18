@@ -1,29 +1,15 @@
 package com.example.flaminx.anonapp;
 
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.flaminx.anonapp.Fragments.AppFragmentPagerAdapter;
-import com.squareup.haha.perflib.Main;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.example.flaminx.anonapp.Middleware.Tutorial;
+import com.example.flaminx.anonapp.Middleware.customViewPager;
+import com.example.flaminx.anonapp.Writers.postWriter;
 
 public class MainActivity extends AppCompatActivity  {
 

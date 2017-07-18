@@ -1,4 +1,4 @@
-package com.example.flaminx.anonapp;
+package com.example.flaminx.anonapp.Middleware;
 
 /**
  * Created by Flaminx on 06/07/2017.

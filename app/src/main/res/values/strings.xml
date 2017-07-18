@@ -35,4 +35,9 @@
     <string name="TutorialText7">The page you are on shows everyones posts</string>
     <!--Options Menu Tex -->
     <string name="showTutorial">Show Tutorial</string>
+    <!--user input hints -->
+    <string name="PostTitleHint">Post Title...</string>
+    <string name="PostTextHint">Post Text...</string>
+    <string name="CommentHint">Reply...</string>
+
 </resources>

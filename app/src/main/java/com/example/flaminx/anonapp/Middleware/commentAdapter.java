@@ -1,4 +1,4 @@
-package com.example.flaminx.anonapp;
+package com.example.flaminx.anonapp.Middleware;
 
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.example.flaminx.anonapp.Pojo.Comment;
-import com.example.flaminx.anonapp.Pojo.Post;
+import com.example.flaminx.anonapp.R;
 
 import java.util.ArrayList;
 
