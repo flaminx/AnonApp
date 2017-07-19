@@ -130,7 +130,7 @@ public class PostsFragment extends Fragment {
 
     private void getPosts(final postsAdapter adapter) {
         String url = "http://192.168.10.27:80/posts";
-
+        postList.clear();
         JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONObject>() {
 
@@ -145,14 +145,6 @@ public class PostsFragment extends Fragment {
                     for (int i = 0; i < Jpost.length(); i++) {
 
                         JSONObject cPost = Jpost.getJSONObject(i);
-                        for (int j = 0; j < postList.size(); j++) {
-                            if (cPost.getInt("id") == postList.get(j).getPostId()) {
-                                exists = true;
-                                loc = j;
-                                break;
-                            }
-                        }
-                        if (!exists) {
                             Post tempPost = new Post();
                             tempPost.setPostTitle(cPost.getString("title"));
                             if (cPost.getString("text").length() > 20) {
@@ -163,11 +155,6 @@ public class PostsFragment extends Fragment {
                             tempPost.setPostDate(cPost.getString("created_at"));
                             tempPost.setPostId(cPost.getInt("id"));
                             postList.add(0,tempPost);
-                        } else if (exists) {
-                            postList.get(loc).setPostScore(cPost.getInt("votes"));
-                        }
-                        exists = false;
-                        loc = 0;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

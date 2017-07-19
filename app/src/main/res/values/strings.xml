@@ -22,6 +22,7 @@
     <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
     <string name="timeout">Could not find server, do you have internet?</string>
     <string name="post_cooldown">You\'re posting too fast! please wait a minute</string>
+    <string name="post_requirements">Title must not be blank</string>
     <string name="ohMyGodThisShouldntHappen">Authentication Failure, please restart</string>
     <string name="Oops">Oops our bad, try again later</string>
     <!-- Tutorial Text-->

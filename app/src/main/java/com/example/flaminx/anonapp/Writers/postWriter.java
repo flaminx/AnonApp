@@ -84,8 +84,8 @@ public class postWriter {
         next.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                submitPost(pText.getText().toString(), pTitle.getText().toString());
-                postPopup.dismiss();
+                submitPost(pText.getText().toString(), pTitle.getText().toString(), postPopup);
+
             }
         });
 
@@ -94,11 +94,11 @@ public class postWriter {
 
     }
 
-    private void submitPost(final String text, final String title) {
+    private void submitPost(final String text, final String title, PopupWindow p) {
 
         SharedPreferences sPrefs = context.getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
 
-
+        final PopupWindow Pwindow = p;
         android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         final String id = sPrefs.getString("anon_login", "-1");
@@ -116,6 +116,7 @@ public class postWriter {
 
                         Toast toast = Toast.makeText(context, "Posted", Toast.LENGTH_SHORT);
                         toast.show();
+                        Pwindow.dismiss();
 
 
                     }
@@ -131,7 +132,14 @@ public class postWriter {
                         }
                         else if(error instanceof ServerError)
                         {
-                            Toast.makeText(context, R.string.post_cooldown, Toast.LENGTH_LONG).show();
+                            if(error.networkResponse.statusCode == 409) {
+
+                                Toast.makeText(context, R.string.post_cooldown, Toast.LENGTH_LONG).show();
+                            }
+                            else if(error.networkResponse.statusCode == 400)
+                            {
+                                Toast.makeText(context, R.string.post_requirements, Toast.LENGTH_LONG).show();
+                            }
                         }
                         else if(error instanceof TimeoutError)
                         {
