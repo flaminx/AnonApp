@@ -13,6 +13,15 @@ public class Comment {
     private String commentText;
     private String commentDate;
 
+    public int getCommentPostId() {
+        return commentPostId;
+    }
+
+    public void setCommentPostId(int commentPostId) {
+        this.commentPostId = commentPostId;
+    }
+
+    private int commentPostId = 0;
     public int getCommentId() {
         return commentId;
     }

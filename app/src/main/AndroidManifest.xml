@@ -17,14 +17,20 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/splashScreenTheme">
+            android:theme="@style/splashScreenTheme"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PostActivity"></activity>
+        <activity android:name=".PostActivity" />
+        <activity android:name=".userPostsActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".userCommentsActivity"></activity>
     </application>
 
 </manifest>

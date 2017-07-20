@@ -26,6 +26,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 public class PostActivity extends AppCompatActivity {
 
     private ArrayList<Comment> commentList = new ArrayList<Comment>();
@@ -33,6 +35,8 @@ public class PostActivity extends AppCompatActivity {
     private RecyclerView comments;
     private RecyclerView.LayoutManager commentLayout;
     private int postId;
+    volatile boolean success;
+    Thread refreshThread;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,7 @@ public class PostActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.activityPostTitle);
         TextView text = (TextView) findViewById(R.id.activityPostText);
         final View parent = findViewById(R.id.activity_comment);
-        postId = getIntent().getIntExtra("id",-1);
+        postId = getIntent().getIntExtra("id", -1);
         title.setText(getIntent().getStringExtra("title"));
         text.setText(getIntent().getStringExtra("text"));
         commentLayout = new LinearLayoutManager(this);
@@ -53,15 +57,36 @@ public class PostActivity extends AppCompatActivity {
         Comment c = new Comment();
         commentList.add(c);
         cAdapter.notifyDataSetChanged();
-        getComments(cAdapter,postId);
+        getComments(cAdapter, postId);
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                success = false;
+                while (!success) {
+                    try {
+                        sleep(1000);
+                        if (AnonApp.getInstance().isRefresh()) {
+                            getComments(cAdapter, postId);
+                            AnonApp.getInstance().setRefresh(false);
+                            success = true;
 
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
         Button addComment = (Button) findViewById(R.id.addcomment);
 
         addComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commentWriter c = new commentWriter(getApplicationContext(),parent);
+                commentWriter c = new commentWriter(getApplicationContext(), parent);
                 c.writePost(postId);
+                refreshThread = new Thread(runnable);
+                refreshThread.start();
             }
         });
 
@@ -72,15 +97,15 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
 
-                getComments(cAdapter,postId);
+                getComments(cAdapter, postId);
                 commentRefresher.setRefreshing(false);
             }
         });
     }
 
 
-    private void getComments(final commentAdapter adapter,int id) {
-        String url = "http://192.168.10.27:80/posts/"+id+"/comments";
+    private void getComments(final commentAdapter adapter, int id) {
+        String url = "http://192.168.10.27:80/posts/" + id + "/comments";
 
         JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONArray>() {
@@ -110,7 +135,7 @@ public class PostActivity extends AppCompatActivity {
                             tempComment.setCommentScore(cPost.getInt("votes"));
                             tempComment.setCommentDate(cPost.getString("created_at"));
                             tempComment.setCommentId(cPost.getInt("id"));
-                            commentList.add(0,tempComment);
+                            commentList.add(0, tempComment);
                         } else if (exists) {
                             commentList.get(loc).setCommentScore(cPost.getInt("votes"));
                         }
@@ -143,5 +168,14 @@ public class PostActivity extends AppCompatActivity {
 
         AnonApp.getInstance().addToReqQ(postRequest);
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(refreshThread != null) {
+            refreshThread.interrupt();
+        }
+        success = true;
     }
 }

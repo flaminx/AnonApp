@@ -96,12 +96,12 @@ public class postWriter {
 
     private void submitPost(final String text, final String title, PopupWindow p) {
 
-        SharedPreferences sPrefs = context.getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
+
 
         final PopupWindow Pwindow = p;
         android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        final String id = sPrefs.getString("anon_login", "-1");
+        final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
         final String POST_URL = "http://192.168.10.27:80/posts";
 
@@ -116,6 +116,7 @@ public class postWriter {
 
                         Toast toast = Toast.makeText(context, "Posted", Toast.LENGTH_SHORT);
                         toast.show();
+                        AnonApp.getInstance().setRefresh(true);
                         Pwindow.dismiss();
 
 

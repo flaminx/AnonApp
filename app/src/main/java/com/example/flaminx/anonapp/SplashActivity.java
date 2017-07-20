@@ -93,6 +93,7 @@ public class SplashActivity extends AppCompatActivity {
                             String uId = user.getString("id");
                             String uScore = user.getString("score");
                             AnonApp.getInstance().setUserScore(Integer.parseInt(uScore));
+                            AnonApp.getInstance().setUserId(uId);
                             SharedPreferences sPrefs = getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
                             sPrefs.edit().putString("anon_login", uId).apply();
                             Toast toast = Toast.makeText(SplashActivity.this, uScore, Toast.LENGTH_SHORT);
@@ -118,6 +119,7 @@ public class SplashActivity extends AppCompatActivity {
 
                             Toast.makeText(SplashActivity.this, R.string.Oops, Toast.LENGTH_LONG).show();
                         } else if (error instanceof TimeoutError) {
+
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SplashActivity.this);
                             alertDialogBuilder.setTitle(getString(R.string.friendly_error));
                             alertDialogBuilder.setMessage("The Servers are down my dude");

@@ -2,20 +2,39 @@ package com.example.flaminx.anonapp.Middleware;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.Pojo.Post;
 import com.example.flaminx.anonapp.PostActivity;
 import com.example.flaminx.anonapp.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Flaminx on 30/06/2017.
@@ -55,14 +74,14 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     public void addVote(int pos)
     {
         Post rowPost = postObject.get(pos);
-        rowPost.setPostScore(rowPost.getPostScore() + 1);
+        updateScore(rowPost,"1",pos);
         postObject.remove(pos);
         postObject.add(pos,rowPost);
     }
     public void removeVote(int pos)
     {
         Post rowPost = postObject.get(pos);
-        rowPost.setPostScore(rowPost.getPostScore() - 1);
+        updateScore(rowPost,"0",pos);
         postObject.remove(pos);
         postObject.add(pos,rowPost);
     }
@@ -83,6 +102,66 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             lastObject = pos;
         }
     }
+
+    private void updateScore(final Post post, String aOrM, int position)
+    {
+        final int pos = position;
+        final String addOrRemove= aOrM;
+        final String id = AnonApp.getInstance().getUserId();
+        final String pid = Integer.toString(post.getPostId());
+        final String POST_URL = "http://192.168.10.27:80/posts/score";
+
+
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        post.setPostScore(Integer.parseInt(response));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(inflatedView.getContext(), error.toString(), Toast.LENGTH_LONG).show();
+
+
+                        if(error instanceof ServerError)
+                        {
+                            postObject.remove(pos);
+                            postObject.add(pos,post);
+                            if(error.networkResponse.statusCode == 409) {
+
+                                Toast.makeText(inflatedView.getContext(), R.string.post_cooldown, Toast.LENGTH_LONG).show();
+                            }
+                            else if(error.networkResponse.statusCode == 400)
+                            {
+                                Toast.makeText(inflatedView.getContext(), R.string.post_requirements, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else if(error instanceof TimeoutError)
+                        {
+                            Toast.makeText(inflatedView.getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", id);
+                params.put("post_id", pid);
+                params.put("AorS", addOrRemove);
+
+                return params;
+            }
+
+        };
+
+        AnonApp.getInstance().addToReqQ(stringRequest);
+    }
+
+
 
 
 

@@ -96,12 +96,12 @@ public class commentWriter {
 
     private void submitComment(final String text, final int pId) {
 
-        SharedPreferences sPrefs = context.getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
+
 
 
         android_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        final String id = sPrefs.getString("anon_login", "-1");
+        final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
         final String POST_URL = "http://192.168.10.27:80/comments";
         final String postId = Integer.toString(pId);
@@ -114,6 +114,7 @@ public class commentWriter {
                     public void onResponse(String response) {
                         Toast toast = Toast.makeText(context, "Posted", Toast.LENGTH_SHORT);
                         toast.show();
+                        AnonApp.getInstance().setRefresh(true);
                     }
                 },
                 new Response.ErrorListener() {

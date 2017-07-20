@@ -29,6 +29,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by Flaminx on 05/03/2017.
  */
@@ -44,7 +46,9 @@ public class PostsFragment extends Fragment {
     private postsAdapter postAdapter;
     private SwipeRefreshLayout postRefresher;
     private Toolbar postFilter;
-
+    private Runnable runnable;
+    private volatile boolean success;
+    private Thread refreshThread;
     public static PostsFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
@@ -57,6 +61,28 @@ public class PostsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
+         runnable = new Runnable() {
+            @Override
+            public void run() {
+                success = false;
+                while (!success) {
+                    try {
+                        sleep(1000);
+                        //Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                        if (AnonApp.getInstance().isRefresh()) {
+                            getPosts(postAdapter);
+                            AnonApp.getInstance().setRefresh(false);
+                            success = true;
+
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        };
+
     }
 
     @Override
@@ -94,6 +120,15 @@ public class PostsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+    }
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+
+            refreshThread = new Thread(runnable);
+            refreshThread.start();
+        }
     }
 
 
@@ -184,6 +219,14 @@ public class PostsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(refreshThread != null) {
+            refreshThread.interrupt();
+        }
+        success = true;
+    }
 }
 
 

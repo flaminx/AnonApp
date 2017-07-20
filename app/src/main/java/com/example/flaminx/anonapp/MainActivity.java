@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity  {
             case 2:
                 break;
             default:
-                //call the "shit has gone wrong class"
+                break;
         }
     }
 

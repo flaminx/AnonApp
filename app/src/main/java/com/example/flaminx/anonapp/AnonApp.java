@@ -38,6 +38,16 @@ public class AnonApp extends Application {
     private int userScore = -1;
     private static AnonApp instance;
     private static RequestQueue reqQ;
+
+    public boolean isRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(boolean refresh) {
+        this.refresh = refresh;
+    }
+
+    private boolean refresh = false;
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

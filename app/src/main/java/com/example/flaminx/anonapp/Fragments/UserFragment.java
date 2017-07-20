@@ -1,5 +1,6 @@
 package com.example.flaminx.anonapp.Fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.R;
+import com.example.flaminx.anonapp.userCommentsActivity;
+import com.example.flaminx.anonapp.userPostsActivity;
 
 /**
  * Created by Flaminx on 05/03/2017.
@@ -54,6 +57,23 @@ public class UserFragment extends Fragment {
         dynUiHandler = new Handler();
         Button getPosts = (Button) view.findViewById(R.id.userPosts);
         Button getComments = (Button) view.findViewById(R.id.userComments);
+
+        getPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),userPostsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        getComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),userCommentsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return view;
     }
     @Override
