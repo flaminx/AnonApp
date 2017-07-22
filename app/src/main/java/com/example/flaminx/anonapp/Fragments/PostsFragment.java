@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,12 +38,12 @@ import static java.lang.Thread.sleep;
 
 public class PostsFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
-
+    private boolean loading = true;
     private int mPage;
     private String jsonResponse;
     private ArrayList<Post> postList = new ArrayList<Post>();
     private RecyclerView posts;
-    private RecyclerView.LayoutManager postsLayout;
+    private LinearLayoutManager postsLayout;
     private postsAdapter postAdapter;
     private SwipeRefreshLayout postRefresher;
     private Toolbar postFilter;
@@ -57,6 +58,7 @@ public class PostsFragment extends Fragment {
         return fragment;
     }
 
+    //Set up refresh thread
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +72,7 @@ public class PostsFragment extends Fragment {
                         sleep(1000);
                         //Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
                         if (AnonApp.getInstance().isRefresh()) {
-                            getPosts(postAdapter);
+                            getPosts(postAdapter,true);
                             AnonApp.getInstance().setRefresh(false);
                             success = true;
 
@@ -92,7 +94,7 @@ public class PostsFragment extends Fragment {
 
 
 
-
+        //set up the RecyclerView
         postAdapter = new postsAdapter(postList);
         posts = (RecyclerView) view.findViewById(R.id.postList);
         posts.setHasFixedSize(false);
@@ -103,17 +105,48 @@ public class PostsFragment extends Fragment {
         postFilter.setTitle(R.string.Filter);
         postRefresher = (SwipeRefreshLayout) view.findViewById(R.id.refreshPosts);
 
+        //On pull up refresh the posts
         postRefresher.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                getPosts(postAdapter);
+                getPosts(postAdapter,true);
                 postRefresher.setRefreshing(false);
             }
         });
         setRecyclerViewItemTouchListener();
 
-        getPosts(postAdapter);
+        //Load Posts
+        getPosts(postAdapter, true);
+
+        //Detect when last post loaded and get more
+        posts.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy > 0) //check for scroll down
+                {
+                     int visibleItemCount = postsLayout.getChildCount();
+                    int totalItemCount = postsLayout.getItemCount();
+                    int pastVisiblesItems = postsLayout.findFirstVisibleItemPosition();
+                    int thisPage = AnonApp.getInstance().getThisPage();
+                    int lastPage = AnonApp.getInstance().getLastpage();
+
+                    if (loading)
+                    {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            loading = false;
+                           if(thisPage < lastPage) {
+                               AnonApp.getInstance().setThisPage(thisPage + 1);
+                               getPosts(postAdapter, false);
+                           }
+                        }
+                    }
+                }
+            }
+        });
         return view;
     }
 
@@ -121,6 +154,7 @@ public class PostsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
+    //If visible start the refresh thread
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
@@ -131,7 +165,7 @@ public class PostsFragment extends Fragment {
         }
     }
 
-
+//update score when swiped left/right
     private void setRecyclerViewItemTouchListener() {
 
         //1
@@ -163,23 +197,29 @@ public class PostsFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(posts);
     }
 
-    private void getPosts(final postsAdapter adapter) {
-        String url = "http://192.168.10.27:80/posts";
-        postList.clear();
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
-                null, new Response.Listener<JSONObject>() {
+    //Retrieve posts from server
+    private void getPosts(final postsAdapter adapter, final boolean frontOrEnd) {
 
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray Jpost = null;
-                    Jpost = response.getJSONArray("data");
-                    boolean exists = false;
-                    int loc = 0;
+        if(frontOrEnd)
+        {
+            String url = "http://192.168.10.27:80/posts?page=1";
+            postList.clear();
+            JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
+                    null, new Response.Listener<JSONObject>() {
 
-                    for (int i = 0; i < Jpost.length(); i++) {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        AnonApp.getInstance().setLastpage(response.getInt("last_page"));
+                        AnonApp.getInstance().setThisPage(response.getInt("current_page"));
+                        JSONArray Jpost = null;
+                        Jpost = response.getJSONArray("data");
+                        boolean exists = false;
+                        int loc = 0;
 
-                        JSONObject cPost = Jpost.getJSONObject(i);
+                        for (int i = 0; i < Jpost.length(); i++) {
+
+                            JSONObject cPost = Jpost.getJSONObject(i);
                             Post tempPost = new Post();
                             tempPost.setPostTitle(cPost.getString("title"));
                             if (cPost.getString("text").length() > 20) {
@@ -189,33 +229,91 @@ public class PostsFragment extends Fragment {
                             tempPost.setPostScore(cPost.getInt("votes"));
                             tempPost.setPostDate(cPost.getString("created_at"));
                             tempPost.setPostId(cPost.getInt("id"));
-                            postList.add(0,tempPost);
+                            postList.add(tempPost);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    loading = true;
+                    adapter.notifyDataSetChanged();
+
                 }
-                adapter.notifyDataSetChanged();
-
-            }
 
 
-        }, new Response.ErrorListener() {
+            }, new Response.ErrorListener() {
 
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
-                if (error instanceof ServerError) {
-                    Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
-                } else if (error instanceof TimeoutError) {
-                    Toast.makeText(getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                    if (error instanceof ServerError) {
+                        Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                    } else if (error instanceof TimeoutError) {
+                        Toast.makeText(getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
 
 
-        });
+            });
+            AnonApp.getInstance().addToReqQ(postRequest);
+        }
+        else
+        {
+            String url = "http://192.168.10.27:80/posts?page=" + AnonApp.getInstance().getThisPage();
+            JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
+                    null, new Response.Listener<JSONObject>() {
 
-        AnonApp.getInstance().addToReqQ(postRequest);
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONArray Jpost = null;
+                        Jpost = response.getJSONArray("data");
+                        boolean exists = false;
+                        int loc = 0;
+
+                        for (int i = 0; i < Jpost.length(); i++) {
+
+                            JSONObject cPost = Jpost.getJSONObject(i);
+                            Post tempPost = new Post();
+                            tempPost.setPostTitle(cPost.getString("title"));
+                            if (cPost.getString("text").length() > 20) {
+                                tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
+                            } else tempPost.setPostBlurb(cPost.getString("text"));
+                            tempPost.setPostText(cPost.getString("text"));
+                            tempPost.setPostScore(cPost.getInt("votes"));
+                            tempPost.setPostDate(cPost.getString("created_at"));
+                            tempPost.setPostId(cPost.getInt("id"));
+                            postList.add(tempPost);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    loading = true;
+                    adapter.notifyDataSetChanged();
+
+                }
+
+
+            }, new Response.ErrorListener() {
+
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                    if (error instanceof ServerError) {
+                        Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                    } else if (error instanceof TimeoutError) {
+                        Toast.makeText(getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+
+            });
+            AnonApp.getInstance().addToReqQ(postRequest);
+        }
+
 
     }
 

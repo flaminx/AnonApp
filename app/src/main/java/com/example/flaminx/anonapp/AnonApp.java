@@ -39,6 +39,26 @@ public class AnonApp extends Application {
     private static AnonApp instance;
     private static RequestQueue reqQ;
 
+    private int thisPage = 0;
+
+    public int getLastpage() {
+        return lastpage;
+    }
+
+    public void setLastpage(int lastpage) {
+        this.lastpage = lastpage;
+    }
+
+    public int getThisPage() {
+        return thisPage;
+    }
+
+    public void setThisPage(int thisPage) {
+        this.thisPage = thisPage;
+    }
+
+    private int lastpage = 0;
+
     public boolean isRefresh() {
         return refresh;
     }
@@ -48,6 +68,7 @@ public class AnonApp extends Application {
     }
 
     private boolean refresh = false;
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -67,39 +88,32 @@ public class AnonApp extends Application {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
     }
 
-    public static synchronized AnonApp getInstance()
-    {
+    public static synchronized AnonApp getInstance() {
         return instance;
     }
 
-    public RequestQueue getReqQ()
-    {
-        if(reqQ == null)
-        {
+    public RequestQueue getReqQ() {
+        if (reqQ == null) {
             reqQ = Volley.newRequestQueue(getApplicationContext());
         }
         return reqQ;
     }
-    public <T> void  addToReqQ(Request<T> request, String tag)
-    {
+
+    public <T> void addToReqQ(Request<T> request, String tag) {
         request.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         getReqQ().add(request);
     }
-    public <T> void  addToReqQ(Request<T> request)
-    {
+
+    public <T> void addToReqQ(Request<T> request) {
         request.setTag(TAG);
         getReqQ().add(request);
     }
 
-    public void cancelReq(Object tag)
-    {
-        if(reqQ != null)
-        {
+    public void cancelReq(Object tag) {
+        if (reqQ != null) {
             reqQ.cancelAll(tag);
         }
     }
-
-
 
 
     @Override
