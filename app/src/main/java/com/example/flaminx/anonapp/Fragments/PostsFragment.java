@@ -120,6 +120,7 @@ public class PostsFragment extends Fragment {
         getPosts(postAdapter, true);
 
         //Detect when last post loaded and get more
+
         posts.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
             @Override
@@ -145,8 +146,10 @@ public class PostsFragment extends Fragment {
                         }
                     }
                 }
+
             }
         });
+
         return view;
     }
 
@@ -167,7 +170,6 @@ public class PostsFragment extends Fragment {
 
 //update score when swiped left/right
     private void setRecyclerViewItemTouchListener() {
-
         //1
         ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(2, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -204,6 +206,7 @@ public class PostsFragment extends Fragment {
         {
             String url = "http://192.168.10.27:80/posts?page=1";
             postList.clear();
+            adapter.notifyDataSetChanged();
             JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
                     null, new Response.Listener<JSONObject>() {
 
