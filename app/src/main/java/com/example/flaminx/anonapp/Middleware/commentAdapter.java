@@ -8,11 +8,22 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.Pojo.Comment;
+import com.example.flaminx.anonapp.Pojo.Post;
 import com.example.flaminx.anonapp.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Flaminx on 30/06/2017.
@@ -52,14 +63,14 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
     public void addVote(int pos)
     {
         Comment rowComment = commentObject.get(pos);
-        rowComment.setCommentScore(rowComment.getCommentScore() + 1);
+        updateScore(rowComment,"1",pos);
         commentObject.remove(pos);
         commentObject.add(pos,rowComment);
     }
     public void removeVote(int pos)
     {
         Comment rowComment = commentObject.get(pos);
-        rowComment.setCommentScore(rowComment.getCommentScore() - 1);
+        updateScore(rowComment,"0",pos);
         commentObject.remove(pos);
         commentObject.add(pos,rowComment);
     }
@@ -125,7 +136,63 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
         }
     }
 
+    private void updateScore(final Comment comment, String aOrM, int position)
+    {
+        final int pos = position;
+        final String addOrRemove= aOrM;
+        final String id = AnonApp.getInstance().getUserId();
+        final String pid = Integer.toString(comment.getCommentId());
+        final String POST_URL = "http://192.168.10.27:80/comments/score";
 
+
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        comment.setCommentScore(Integer.parseInt(response));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(inflatedView.getContext(), error.toString(), Toast.LENGTH_LONG).show();
+
+
+                        if(error instanceof ServerError)
+                        {
+                            commentObject.remove(pos);
+                            commentObject.add(pos,comment);
+                            if(error.networkResponse.statusCode == 409) {
+
+                                Toast.makeText(inflatedView.getContext(), R.string.post_cooldown, Toast.LENGTH_LONG).show();
+                            }
+                            else if(error.networkResponse.statusCode == 400)
+                            {
+                                Toast.makeText(inflatedView.getContext(), R.string.post_requirements, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else if(error instanceof TimeoutError)
+                        {
+                            Toast.makeText(inflatedView.getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("user_id", id);
+                params.put("comment_id", pid);
+                params.put("AorS", addOrRemove);
+
+                return params;
+            }
+
+        };
+
+        AnonApp.getInstance().addToReqQ(stringRequest);
+    }
 
 
 

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -54,10 +55,9 @@ public class PostActivity extends AppCompatActivity {
         comments.setHasFixedSize(false);
         comments.setAdapter(cAdapter);
         comments.setLayoutManager(commentLayout);
-        Comment c = new Comment();
-        commentList.add(c);
         cAdapter.notifyDataSetChanged();
         getComments(cAdapter, postId);
+        setRecyclerViewItemTouchListener();
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -169,6 +169,38 @@ public class PostActivity extends AppCompatActivity {
         AnonApp.getInstance().addToReqQ(postRequest);
 
     }
+
+    //update score when swiped left/right
+    private void setRecyclerViewItemTouchListener() {
+        //1
+        ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(2, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder viewHolder1) {
+                //2
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                //3
+
+                int position = viewHolder.getAdapterPosition();
+                if (swipeDir == 8) {
+                    cAdapter.addVote(position);
+                } else {
+                    cAdapter.removeVote(position);
+                }
+
+                cAdapter.notifyItemChanged(position);
+
+            }
+        };
+
+        //4
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(comments);
+    }
+
 
     @Override
     public void onStop() {
