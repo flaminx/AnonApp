@@ -4,34 +4,30 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.NetworkInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.flaminx.anonapp.Pojo.NetworkCheck;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.provider.Settings.Secure;
-
-import static java.security.AccessController.getContext;
 
 
 /**
@@ -46,6 +42,18 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Resources resources;
+        Configuration configuration;
+        DisplayMetrics displayMetrics;
+
+        resources = this.getResources();
+        configuration = resources.getConfiguration();
+        displayMetrics = resources.getDisplayMetrics();
+        String lan = AnonApp.getInstance().getLanguage();
+        configuration.locale = new Locale(lan);
+        resources.updateConfiguration(configuration, displayMetrics);
+
 
         android_id = Secure.getString(this.getContentResolver(),
                 Secure.ANDROID_ID);
@@ -73,7 +81,36 @@ public class SplashActivity extends AppCompatActivity {
             runstate = 2;
         }
         sPrefs.edit().putInt("anon_version", cVersion).apply();
-        registerUser();
+        if (oVersion == -1) {
+
+            String[] languages = getResources().getStringArray(R.array.language_array);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SplashActivity.this);
+            alertDialogBuilder.setTitle("Language");
+
+            alertDialogBuilder.setCancelable(false);
+
+            alertDialogBuilder.setSingleChoiceItems(languages, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case 0:
+                            AnonApp.getInstance().setLanguage("en");
+                            break;
+                        case 1:
+                            AnonApp.getInstance().setLanguage("pl");
+                            break;
+                        default:
+                            AnonApp.getInstance().setLanguage("en");
+                    }
+                    registerUser();
+                }
+            });
+
+
+            AlertDialog dialog = alertDialogBuilder.create();
+            dialog.show();
+        }
+        else registerUser();
     }
 
     private void registerUser() {
@@ -81,7 +118,8 @@ public class SplashActivity extends AppCompatActivity {
 
         final String id = sPrefs.getString("anon_login", "-1");
         final String password = android_id;
-        final String REGISTER_URL = "http://192.168.10.27:80/users";
+        final String REGISTER_URL = AnonApp.getInstance().getWebAddress() +"/users";
+
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
                 new Response.Listener<String>() {
@@ -104,14 +142,14 @@ public class SplashActivity extends AppCompatActivity {
                             finish();
 
                         } catch (JSONException e) {
-
+                            Toast.makeText(SplashActivity.this, R.string.Oops, Toast.LENGTH_LONG).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_LONG).show();
 
                         if (error instanceof AuthFailureError) {
                             Toast.makeText(SplashActivity.this, R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();
@@ -138,7 +176,7 @@ public class SplashActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    finish();
+                                    finishAffinity();
                                     System.exit(0);
                                 }
                             });

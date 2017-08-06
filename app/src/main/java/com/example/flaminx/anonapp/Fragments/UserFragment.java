@@ -51,6 +51,7 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_user, container, false);
+
     uPointsUI = (TextView) view.findViewById(R.id.pointCount);
         uPointsValue = 0;
         usersPoints = AnonApp.getInstance().getUserScore();

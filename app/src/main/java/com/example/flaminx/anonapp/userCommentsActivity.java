@@ -51,63 +51,14 @@ public class userCommentsActivity extends AppCompatActivity {
 
 
     private void getPosts(final commentAdapter adapter, String userId) {
-        /*
-        String url = "http://192.168.10.27:80/user/"+userId+"/comments";
-        commentList.clear();
-        JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url,
-                null, new Response.Listener<JSONArray>() {
 
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-
-
-                    for (int i = 0; i < response.length(); i++) {
-
-                        JSONObject cPost = response.getJSONObject(i);
-                        Comment tempPost = new Comment();
-                        tempPost.setCommentText(cPost.getString("text"));
-                        tempPost.setCommentScore(cPost.getInt("votes"));
-                        tempPost.setCommentDate(cPost.getString("created_at"));
-                        tempPost.setCommentId(cPost.getInt("id"));
-                        tempPost.setCommentPostId(cPost.getInt("post_id"));
-                        commentList.add(0,tempPost);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyDataSetChanged();
-
-            }
-
-
-        }, new Response.ErrorListener() {
-
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
-                if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
-                } else if (error instanceof TimeoutError) {
-                    Toast.makeText(getApplicationContext(), R.string.timeout, Toast.LENGTH_LONG).show();
-                }
-            }
-
-
-        });
-
-        AnonApp.getInstance().addToReqQ(postRequest);
-
-    }
-    */
 
 
         String android_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
-        final String POST_URL = "http://192.168.10.27:80/user/comments";
+        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/user/comments";
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_URL,
@@ -129,7 +80,7 @@ public class userCommentsActivity extends AppCompatActivity {
 
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
                         }
                         adapter.notifyDataSetChanged();
                     }
@@ -137,7 +88,7 @@ public class userCommentsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
 
                         if (error instanceof AuthFailureError) {
                             Toast.makeText(getApplicationContext(), R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();

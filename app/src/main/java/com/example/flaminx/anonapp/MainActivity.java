@@ -1,15 +1,20 @@
 package com.example.flaminx.anonapp;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.example.flaminx.anonapp.Fragments.AppFragmentPagerAdapter;
 import com.example.flaminx.anonapp.Middleware.Tutorial;
 import com.example.flaminx.anonapp.Middleware.customViewPager;
 import com.example.flaminx.anonapp.Writers.postWriter;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -23,6 +28,18 @@ public class MainActivity extends AppCompatActivity  {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+
+        Resources resources;
+        Configuration configuration;
+        DisplayMetrics displayMetrics;
+        resources = this.getResources();
+        configuration = resources.getConfiguration();
+        displayMetrics = resources.getDisplayMetrics();
+        String lan = AnonApp.getInstance().getLanguage();
+        configuration.locale = new Locale(lan);
+        resources.updateConfiguration(configuration, displayMetrics);
+
+
         setContentView(R.layout.sliding_tabs);
         parent = findViewById(R.id.Main_layout);
         runstate = getIntent().getIntExtra("runstate",-1);

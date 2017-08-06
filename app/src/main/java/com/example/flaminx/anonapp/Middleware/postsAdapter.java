@@ -75,15 +75,15 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     {
         Post rowPost = postObject.get(pos);
         updateScore(rowPost,"1",pos);
-        postObject.remove(pos);
-        postObject.add(pos,rowPost);
+        //postObject.remove(pos);
+        //postObject.add(pos,rowPost);
     }
     public void removeVote(int pos)
     {
         Post rowPost = postObject.get(pos);
         updateScore(rowPost,"0",pos);
-        postObject.remove(pos);
-        postObject.add(pos,rowPost);
+        //postObject.remove(pos);
+        //postObject.add(pos,rowPost);
     }
 
     public void addAll(ArrayList<Post> update) {
@@ -103,13 +103,12 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
         }
     }
 
-    private void updateScore(final Post post, String aOrM, int position)
+    private void updateScore(final Post post, String aOrM, final int position)
     {
-        final int pos = position;
         final String addOrRemove= aOrM;
         final String id = AnonApp.getInstance().getUserId();
         final String pid = Integer.toString(post.getPostId());
-        final String POST_URL = "http://192.168.10.27:80/posts/score";
+        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/posts/score";
 
 
 
@@ -119,6 +118,9 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
                     @Override
                     public void onResponse(String response) {
                         post.setPostScore(Integer.parseInt(response));
+                        //postObject.remove(pos);
+                        //postObject.add(pos,post);
+                        notifyItemChanged(position);
                     }
                 },
                 new Response.ErrorListener() {
@@ -129,8 +131,8 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
 
                         if(error instanceof ServerError)
                         {
-                            postObject.remove(pos);
-                            postObject.add(pos,post);
+                            //postObject.remove(pos);
+                            //postObject.add(pos,post);
                             if(error.networkResponse.statusCode == 409) {
 
                                 Toast.makeText(inflatedView.getContext(), R.string.post_cooldown, Toast.LENGTH_LONG).show();
@@ -144,6 +146,7 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
                         {
                             Toast.makeText(inflatedView.getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
                         }
+                        notifyItemChanged(position);
                     }
                 }) {
             @Override
@@ -162,17 +165,12 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
     }
 
 
-
-
-
-
-
     @Override
     public int getItemCount() {
         return postObject.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener
     {
         private TextView postTitle;
         private TextView postBlurb;
@@ -190,7 +188,10 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 v.setElevation(10);
             }
+
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
+
 
         }
 
@@ -202,10 +203,14 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             postIntent.putExtra("text",mPost.getPostText());
             postIntent.putExtra("id",mPost.getPostId());
             context.startActivity(postIntent);
+        }
 
-
-
-
+        @Override
+        public boolean onLongClick(View v)
+        {
+            Context context = itemView.getContext();
+            mPost.Delete(context,mPost.getPostId());
+            return true;
         }
         public void bind(Post post)
         {
@@ -215,6 +220,8 @@ public class postsAdapter extends RecyclerView.Adapter<postsAdapter.ViewHolder>{
             postDate.setText(post.getPostDate());
             postScore.setText(Integer.toString(post.getPostScore()));
         }
+
+
     }
 
 

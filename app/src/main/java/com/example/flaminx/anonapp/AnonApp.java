@@ -2,12 +2,15 @@ package com.example.flaminx.anonapp;
 
 import android.app.Application;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.squareup.leakcanary.LeakCanary;
+
+import java.util.Locale;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -38,6 +41,22 @@ public class AnonApp extends Application {
     private int userScore = -1;
     private static AnonApp instance;
     private static RequestQueue reqQ;
+
+    public String getWebAddress() {
+        return webAddress;
+    }
+
+    private final String webAddress = "http://192.168.10.27:80";
+
+    public String getLanguage() {
+        return Language;
+    }
+
+    public void setLanguage(String language) {
+        Language = language;
+    }
+
+    private String Language = "en";
 
     private int thisPage = 0;
 

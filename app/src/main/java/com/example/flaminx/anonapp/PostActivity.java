@@ -1,11 +1,14 @@
 package com.example.flaminx.anonapp;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static java.lang.Thread.sleep;
 
@@ -41,7 +45,21 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Resources resources;
+        Configuration configuration;
+        DisplayMetrics displayMetrics;
+
+        resources = this.getResources();
+        configuration = resources.getConfiguration();
+        displayMetrics = resources.getDisplayMetrics();
+        String lan = AnonApp.getInstance().getLanguage();
+        configuration.locale = new Locale(lan);
+        resources.updateConfiguration(configuration, displayMetrics);
         setContentView(R.layout.activity_post);
+
+
+
+
 
         TextView title = (TextView) findViewById(R.id.activityPostTitle);
         TextView text = (TextView) findViewById(R.id.activityPostText);
@@ -97,6 +115,8 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
 
+                commentList.clear();
+                cAdapter.notifyDataSetChanged();
                 getComments(cAdapter, postId);
                 commentRefresher.setRefreshing(false);
             }
@@ -105,8 +125,7 @@ public class PostActivity extends AppCompatActivity {
 
 
     private void getComments(final commentAdapter adapter, int id) {
-        String url = "http://192.168.10.27:80/posts/" + id + "/comments";
-
+        String url = AnonApp.getInstance().getWebAddress()+"/posts/" + id + "/comments";
         JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONArray>() {
 
@@ -143,7 +162,7 @@ public class PostActivity extends AppCompatActivity {
                         loc = 0;
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
                 }
                 adapter.notifyDataSetChanged();
 
@@ -155,7 +174,7 @@ public class PostActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
                 if (error instanceof ServerError) {
                     Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
                 } else if (error instanceof TimeoutError) {
@@ -187,11 +206,13 @@ public class PostActivity extends AppCompatActivity {
                 int position = viewHolder.getAdapterPosition();
                 if (swipeDir == 8) {
                     cAdapter.addVote(position);
+
                 } else {
                     cAdapter.removeVote(position);
+
                 }
 
-                cAdapter.notifyItemChanged(position);
+                //cAdapter.notifyItemChanged(position);
 
             }
         };

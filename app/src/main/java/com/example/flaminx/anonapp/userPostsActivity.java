@@ -109,7 +109,7 @@ public class userPostsActivity extends AppCompatActivity {
                 Settings.Secure.ANDROID_ID);
         final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
-        final String POST_URL = "http://192.168.10.27:80/user/posts";
+        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/user/posts";
 
 
 
@@ -137,7 +137,7 @@ public class userPostsActivity extends AppCompatActivity {
                                 postList.add(0,tempPost);
                             }
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(),R.string.Oops, Toast.LENGTH_LONG).show();
                         }
                         adapter.notifyDataSetChanged();
 
@@ -149,7 +149,7 @@ public class userPostsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
 
                         if(error instanceof AuthFailureError)
                         {

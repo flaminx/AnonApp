@@ -5,9 +5,11 @@ package com.example.flaminx.anonapp.Writers;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +30,10 @@ import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.R;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -51,7 +53,19 @@ public class commentWriter {
     }
 
     public void writePost(final int postId) {
+        Resources resources;
+        Configuration configuration;
+        DisplayMetrics displayMetrics;
+
+        resources = context.getResources();
+        configuration = resources.getConfiguration();
+        displayMetrics = resources.getDisplayMetrics();
+        String lan = AnonApp.getInstance().getLanguage();
+
+        configuration.locale = new Locale(lan);
+        resources.updateConfiguration(configuration, displayMetrics);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+
 
         // Inflate the custom layout/view
         View customView = inflater.inflate(R.layout.commentwriter_layout, null);
@@ -103,7 +117,7 @@ public class commentWriter {
                 Settings.Secure.ANDROID_ID);
         final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
-        final String POST_URL = "http://192.168.10.27:80/comments";
+        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/comments";
         final String postId = Integer.toString(pId);
 
 
@@ -120,7 +134,7 @@ public class commentWriter {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
 
                         if(error instanceof AuthFailureError)
                         {
@@ -128,7 +142,7 @@ public class commentWriter {
                         }
                         else if(error instanceof ServerError)
                         {
-                            Toast.makeText(context, postId, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, R.string.post_cooldown, Toast.LENGTH_LONG).show();
                         }
                         else if(error instanceof TimeoutError)
                         {

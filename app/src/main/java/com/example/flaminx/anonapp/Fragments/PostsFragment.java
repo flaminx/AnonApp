@@ -1,5 +1,7 @@
 package com.example.flaminx.anonapp.Fragments;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -41,6 +43,7 @@ public class PostsFragment extends Fragment {
     private boolean loading = true;
     private int mPage;
     private String jsonResponse;
+    private int[] rbgArray = {211,211,214}; // colours for recycler items
     private ArrayList<Post> postList = new ArrayList<Post>();
     private RecyclerView posts;
     private LinearLayoutManager postsLayout;
@@ -63,28 +66,6 @@ public class PostsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
-         runnable = new Runnable() {
-            @Override
-            public void run() {
-                success = false;
-                while (!success) {
-                    try {
-                        sleep(1000);
-                        //Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
-                        if (AnonApp.getInstance().isRefresh()) {
-                            getPosts(postAdapter,true);
-                            AnonApp.getInstance().setRefresh(false);
-                            success = true;
-
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        };
-
     }
 
     @Override
@@ -157,16 +138,7 @@ public class PostsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-    //If visible start the refresh thread
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
 
-        if (isVisibleToUser) {
-
-            refreshThread = new Thread(runnable);
-            refreshThread.start();
-        }
-    }
 
 //update score when swiped left/right
     private void setRecyclerViewItemTouchListener() {
@@ -188,12 +160,27 @@ public class PostsFragment extends Fragment {
                 } else {
                     postAdapter.removeVote(position);
                 }
+                viewHolder.itemView.setBackgroundColor(Color.parseColor("#d3d3d6"));
+            }
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                if(actionState!=ItemTouchHelper.ACTION_STATE_IDLE){
 
-                postAdapter.notifyItemChanged(position);
-
+                    float limit = dX / 30;
+if(isCurrentlyActive) {
+    if (dX > 0) {
+        //rbgArray[0] += limit;
+        viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0]- Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] - Math.round(limit)));
+    } else if (dX < 0) {
+        //rbgArray[1] += limit;
+        viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] + Math.round(limit)));
+    }
+    //rgb(211,211,214)
+}
+                }
             }
         };
-
         //4
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchCallback);
         itemTouchHelper.attachToRecyclerView(posts);
@@ -304,7 +291,7 @@ public class PostsFragment extends Fragment {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
                     if (error instanceof ServerError) {
                         Toast.makeText(getContext(), R.string.Oops, Toast.LENGTH_LONG).show();
                     } else if (error instanceof TimeoutError) {
@@ -328,6 +315,7 @@ public class PostsFragment extends Fragment {
         }
         success = true;
     }
+
 }
 
 

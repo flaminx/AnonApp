@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">AnonApp</string>
+
+    <string-array name="tab_array">
+        <item>User</item>
+        <item>Posts</item>
+        <item>Options</item>
+    </string-array>
+
+    <!-- general use strings -->
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="retry">Sprobuj jeszcze raz</string>
+    <string name="quit">Porzuc</string>
+    <string name="test">Test</string>
+    <string name="next">Nastepne</string>
+    <string name="comment">Komentarz</string>
+    <string name="submit">Zatwierdz</string>
+    <string name="back">Wroc</string>
+    <string name="Filter">FILTR</string>
+    <!-- error strings -->
+    <string name="friendly_error">Ohh!</string>
+    <string name="no_connection">Moze serwer nie pracuje albo nie masz internetu!</string>
+    <string name="timeout">Nie moge znalezc serwer czy masz internet?></string>
+    <string name="post_cooldown">Ty wprowadzasz za szybko ,poczekaj chwile</string>
+    <string name="post_requirements">Musisz wprowadzic tytul </string>
+    <string name="ohMyGodThisShouldntHappen">Pomylka w danych.Sprobuj jeszcze raz</string>
+    <string name="Oops">Oops! to nasza wina.Sprobuj pozniej</string>
+    <!-- Tutorial Text-->
+    <string name="TutorialTitle">Witamy w Anon!</string>
+    <string name="TutorialText1">Te instrukcje naucza Cie jak uzywac ta aplikacje</string>
+    <string name="TutorialText2">Czy jestes pewny?Mozesz  znowu otworzyc instrukcje z opcji</string>
+    <string name="TutorialText3">Lewa strona pozwoli Ci zobaczyc strone uzytkownika</string>
+    <string name="TutorialText4">Strona uzytkownika pokaze Ci posty,komentarze i punkty</string>
+    <string name="TutorialText5">Prawa strona pokaze Ci opcje</string>
+    <string name="TutorialText6">Te opcje pozwola Ci zmienic ustawienia i zobaczyc instrukcje</string>
+    <string name="TutorialText7">Srodkowa strona pokaze Ci wszystkie posty</string>
+    <!--Options Menu Tex -->
+    <string name="showTutorial">Pokaz instrukcje</string>
+    <string name="changeLanguage">Zmien jezyk</string>
+    <string name="deleteAcconut">Skasuj konto?</string>
+    <!--user input hints -->
+    <string name="PostTitleHint">Wprowadz tytul...</string>
+    <string name="PostTextHint">Wprowadz tekst...</string>
+    <string name="CommentHint">Odpowiedz...</string>
+
+</resources>

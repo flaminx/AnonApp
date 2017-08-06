@@ -1,5 +1,6 @@
 package com.example.flaminx.anonapp.Middleware;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,15 +65,15 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
     {
         Comment rowComment = commentObject.get(pos);
         updateScore(rowComment,"1",pos);
-        commentObject.remove(pos);
-        commentObject.add(pos,rowComment);
+        //commentObject.remove(pos);
+        //commentObject.add(pos,rowComment);
     }
     public void removeVote(int pos)
     {
         Comment rowComment = commentObject.get(pos);
         updateScore(rowComment,"0",pos);
-        commentObject.remove(pos);
-        commentObject.add(pos,rowComment);
+        //commentObject.remove(pos);
+        //commentObject.add(pos,rowComment);
     }
 
     public void addAll(ArrayList<Comment> update) {
@@ -101,7 +102,7 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
         return commentObject.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener
     {
 
         private TextView commentText;
@@ -119,13 +120,15 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 v.setElevation(10);
             }
-            v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
 
         }
 
         @Override
-        public void onClick(View v) {
-
+        public boolean onLongClick(View v) {
+            Context context = itemView.getContext();
+            mComment.Delete(context, mComment.getCommentId());
+            return true;
         }
         public void bind(Comment comment)
         {
@@ -136,13 +139,12 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
         }
     }
 
-    private void updateScore(final Comment comment, String aOrM, int position)
+    private void updateScore(final Comment comment, String aOrM, final int position)
     {
-        final int pos = position;
         final String addOrRemove= aOrM;
         final String id = AnonApp.getInstance().getUserId();
         final String pid = Integer.toString(comment.getCommentId());
-        final String POST_URL = "http://192.168.10.27:80/comments/score";
+        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/comments/score";
 
 
 
@@ -152,6 +154,8 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
                     @Override
                     public void onResponse(String response) {
                         comment.setCommentScore(Integer.parseInt(response));
+                        notifyItemChanged(position);
+
                     }
                 },
                 new Response.ErrorListener() {
@@ -162,8 +166,7 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
 
                         if(error instanceof ServerError)
                         {
-                            commentObject.remove(pos);
-                            commentObject.add(pos,comment);
+
                             if(error.networkResponse.statusCode == 409) {
 
                                 Toast.makeText(inflatedView.getContext(), R.string.post_cooldown, Toast.LENGTH_LONG).show();
@@ -177,6 +180,7 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
                         {
                             Toast.makeText(inflatedView.getContext(), R.string.timeout, Toast.LENGTH_LONG).show();
                         }
+                        notifyItemChanged(position);
                     }
                 }) {
             @Override

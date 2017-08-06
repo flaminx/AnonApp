@@ -5,9 +5,11 @@ package com.example.flaminx.anonapp.Writers;
  */
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +30,10 @@ import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.R;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**
@@ -48,9 +50,20 @@ public class postWriter {
         context = vContext;
         parentView = pView;
 
+
     }
 
     public void writePost() {
+        Resources resources;
+        Configuration configuration;
+        DisplayMetrics displayMetrics;
+
+        resources = context.getResources();
+        configuration = resources.getConfiguration();
+        displayMetrics = resources.getDisplayMetrics();
+        String lan = AnonApp.getInstance().getLanguage();
+        configuration.locale = new Locale(lan);
+        resources.updateConfiguration(configuration, displayMetrics);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // Inflate the custom layout/view
@@ -90,12 +103,9 @@ public class postWriter {
         });
 
 
-
-
     }
 
     private void submitPost(final String text, final String title, PopupWindow p) {
-
 
 
         final PopupWindow Pwindow = p;
@@ -103,9 +113,7 @@ public class postWriter {
                 Settings.Secure.ANDROID_ID);
         final String id = AnonApp.getInstance().getUserId();
         final String password = android_id;
-        final String POST_URL = "http://192.168.10.27:80/posts";
-
-
+        final String POST_URL = AnonApp.getInstance().getWebAddress() +"/posts";
 
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_URL,
@@ -125,25 +133,18 @@ public class postWriter {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
 
-                        if(error instanceof AuthFailureError)
-                        {
+                        if (error instanceof AuthFailureError) {
                             Toast.makeText(context, R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();
-                        }
-                        else if(error instanceof ServerError)
-                        {
-                            if(error.networkResponse.statusCode == 409) {
+                        } else if (error instanceof ServerError) {
+                            if (error.networkResponse.statusCode == 409) {
 
                                 Toast.makeText(context, R.string.post_cooldown, Toast.LENGTH_LONG).show();
-                            }
-                            else if(error.networkResponse.statusCode == 400)
-                            {
+                            } else if (error.networkResponse.statusCode == 400) {
                                 Toast.makeText(context, R.string.post_requirements, Toast.LENGTH_LONG).show();
                             }
-                        }
-                        else if(error instanceof TimeoutError)
-                        {
+                        } else if (error instanceof TimeoutError) {
                             Toast.makeText(context, R.string.timeout, Toast.LENGTH_LONG).show();
                         }
                     }
