@@ -154,6 +154,7 @@ public class PostActivity extends AppCompatActivity {
                             tempComment.setCommentScore(cPost.getInt("votes"));
                             tempComment.setCommentDate(cPost.getString("created_at"));
                             tempComment.setCommentId(cPost.getInt("id"));
+                            tempComment.setCommentStyle(cPost.getInt("comment_style"));
                             commentList.add(0, tempComment);
                         } else if (exists) {
                             commentList.get(loc).setCommentScore(cPost.getInt("votes"));

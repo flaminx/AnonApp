@@ -1,6 +1,11 @@
 package com.example.flaminx.anonapp.Middleware;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,7 +114,9 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
         private TextView commentText;
         private TextView commentDate;
         private TextView commentScore;
+        private LayerDrawable commentStyle;
         private Comment mComment;
+        private ImageView commentImage;
 
         public ViewHolder(View v, int count)
         {
@@ -117,6 +125,10 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
             commentText = (TextView) v.findViewById(R.id.comment_text);
             commentDate = (TextView) v.findViewById(R.id.comment_date);
             commentScore = (TextView) v.findViewById(R.id.comment_score);
+            commentStyle = (LayerDrawable) v.getResources().getDrawable(R.drawable.comment_layers);
+            commentImage = (ImageView) v.findViewById(R.id.commentstyleimage);
+
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 v.setElevation(10);
             }
@@ -136,6 +148,56 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
             commentText.setText(comment.getCommentText());
             commentDate.setText(comment.getCommentDate());
             commentScore.setText(Integer.toString(comment.getCommentScore()));
+
+
+            String cstyle = Integer.toString(comment.getCommentStyle());
+            int color = colourSelect(cstyle.charAt(0));
+            Drawable first = commentStyle.findDrawableByLayerId(R.id.commentcircle);
+            first.setColorFilter(color,PorterDuff.Mode.SRC_ATOP);
+
+            Drawable second = commentStyle.findDrawableByLayerId(R.id.symbol);
+            color = colourSelect(cstyle.charAt(1));
+            second.setColorFilter(color,PorterDuff.Mode.SRC_ATOP);
+            commentImage.setBackground(commentStyle);
+        }
+
+        private int colourSelect(char res)
+        {
+            int color;
+            switch (res)
+            {
+                case '1':
+                    color = Color.parseColor("#d11141");
+                    break;
+                case '2':
+                    color = Color.parseColor("#00b159");
+                    break;
+                case '3':
+                    color = Color.parseColor("#00aedb");
+                    break;
+                case '4':
+                    color = Color.parseColor("#f37735");
+                    break;
+                case '5':
+                    color = Color.parseColor("#ffc425");
+                    break;
+                case '6':
+                    color = Color.parseColor("#a200ff");
+                    break;
+                case '7':
+                    color = Color.parseColor("#f47835");
+                    break;
+                case '8':
+                    color = Color.parseColor("#8ec127");
+                    break;
+                case '9':
+                    color = Color.parseColor("#d41243");
+                    break;
+                default:
+                    color = Color.parseColor("#d11141");
+                    break;
+            }
+            return color;
         }
     }
 

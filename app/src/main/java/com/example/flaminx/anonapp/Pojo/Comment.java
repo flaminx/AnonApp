@@ -76,6 +76,15 @@ public class Comment {
     private int commentScore;
     private int commentId;
 
+    public int getCommentStyle() {
+        return commentStyle;
+    }
+
+    public void setCommentStyle(int commentStyle) {
+        this.commentStyle = commentStyle;
+    }
+
+    private int commentStyle;
 
 
     public Comment()
@@ -84,6 +93,7 @@ public class Comment {
         commentDate = "";
         commentScore = 0;
         commentId = -1;
+        commentStyle = 111;
     }
     public void Delete(final Context context, int commentId) {
 
