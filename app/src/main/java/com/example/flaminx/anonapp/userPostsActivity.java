@@ -35,8 +35,10 @@ import static java.security.AccessController.getContext;
 public class userPostsActivity extends AppCompatActivity {
     private ArrayList<Post> postList = new ArrayList<Post>();
     private RecyclerView posts;
-    private RecyclerView.LayoutManager postsLayout;
+    private LinearLayoutManager postsLayout;
     private postsAdapter postAdapter;
+    private boolean loading = false;
+    private String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,135 +51,176 @@ public class userPostsActivity extends AppCompatActivity {
         postsLayout = new LinearLayoutManager(this);
         posts.setLayoutManager(postsLayout);
         posts.setAdapter(postAdapter);
-        getPosts(postAdapter,AnonApp.getInstance().getUserId());
+        userId = AnonApp.getInstance().getUserId();
+        AnonApp.getInstance().setThisPage(1);
+        getPosts(postAdapter,userId,true);
+        posts.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy > 0) //check for scroll down
+                {
+                    int visibleItemCount = postsLayout.getChildCount();
+                    int totalItemCount = postsLayout.getItemCount();
+                    int pastVisiblesItems = postsLayout.findFirstVisibleItemPosition();
+                    int thisPage = AnonApp.getInstance().getThisPage();
+                    int lastPage = AnonApp.getInstance().getLastpage();
+
+                    if (loading)
+                    {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                        {
+                            loading = false;
+                            if(thisPage < lastPage) {
+                                AnonApp.getInstance().setThisPage(thisPage + 1);
+                                getPosts(postAdapter,userId, false);
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
     }
 
+    private void getPosts(final postsAdapter adapter,final String uId, final boolean frontOrEnd) {
 
-    private void getPosts(final postsAdapter adapter, String userId) {
-        /*
-        String url = "http://192.168.10.27:80/user/"+userId+"/posts";
-        postList.clear();
-        JsonArrayRequest postRequest = new JsonArrayRequest(Request.Method.GET, url,
-                null, new Response.Listener<JSONArray>() {
-
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-
-
-                    for (int i = 0; i < response.length(); i++) {
-
-                        JSONObject cPost = response.getJSONObject(i);
-                        Post tempPost = new Post();
-                        tempPost.setPostTitle(cPost.getString("title"));
-                        if (cPost.getString("text").length() > 20) {
-                            tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
-                        } else tempPost.setPostBlurb(cPost.getString("text"));
-                        tempPost.setPostText(cPost.getString("text"));
-                        tempPost.setPostScore(cPost.getInt("votes"));
-                        tempPost.setPostDate(cPost.getString("created_at"));
-                        tempPost.setPostId(cPost.getInt("id"));
-                        postList.add(0,tempPost);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                adapter.notifyDataSetChanged();
-
-            }
-
-
-        }, new Response.ErrorListener() {
-
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
-                if (error instanceof ServerError) {
-                    Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
-                } else if (error instanceof TimeoutError) {
-                    Toast.makeText(getApplicationContext(), R.string.timeout, Toast.LENGTH_LONG).show();
-                }
-            }
-
-
-        });
-
-        AnonApp.getInstance().addToReqQ(postRequest);*/
-
-        String android_id = Settings.Secure.getString(this.getContentResolver(),
+        final String android_id = Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        final String id = AnonApp.getInstance().getUserId();
-        final String password = android_id;
-        final String POST_URL = AnonApp.getInstance().getWebAddress()+"/user/posts";
+        if(frontOrEnd)
+        {
+            String url = "http://192.168.10.27/user/posts?page=1";
+            postList.clear();
+            adapter.notifyDataSetChanged();
+            StringRequest postRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>(){
 
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        AnonApp.getInstance().setLastpage(obj.getInt("last_page"));
+                        AnonApp.getInstance().setThisPage(obj.getInt("current_page"));
+                        JSONArray Jpost = null;
+                        Jpost = obj.getJSONArray("data");
+                        boolean exists = false;
+                        int loc = 0;
 
+                        for (int i = 0; i < Jpost.length(); i++) {
 
+                            JSONObject cPost = Jpost.getJSONObject(i);
+                            Post tempPost = new Post();
+                            tempPost.setPostTitle(cPost.getString("title"));
+                            if (cPost.getString("text").length() > 20) {
+                                tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
+                            } else tempPost.setPostBlurb(cPost.getString("text"));
+                            tempPost.setPostText(cPost.getString("text"));
+                            tempPost.setPostScore(cPost.getInt("votes"));
+                            tempPost.setPostDate(cPost.getString("created_at"));
+                            tempPost.setPostId(cPost.getInt("id"));
+                            postList.add(tempPost);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, POST_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        try {
-                            JSONArray obj = new JSONArray(response);
-
-                            for (int i = 0; i < response.length(); i++) {
-
-                                JSONObject cPost = obj.getJSONObject(i);
-                                Post tempPost = new Post();
-                                tempPost.setPostTitle(cPost.getString("title"));
-                                if (cPost.getString("text").length() > 20) {
-                                    tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
-                                } else tempPost.setPostBlurb(cPost.getString("text"));
-                                tempPost.setPostText(cPost.getString("text"));
-                                tempPost.setPostScore(cPost.getInt("votes"));
-                                tempPost.setPostDate(cPost.getString("created_at"));
-                                tempPost.setPostId(cPost.getInt("id"));
-                                postList.add(0,tempPost);
-                            }
-                        } catch (JSONException e) {
-                            Toast.makeText(getApplicationContext(),R.string.Oops, Toast.LENGTH_LONG).show();
                         }
-                        adapter.notifyDataSetChanged();
-
-
-
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+                    loading = true;
+                    adapter.notifyDataSetChanged();
 
-                        if(error instanceof AuthFailureError)
-                        {
-                            Toast.makeText(getApplicationContext(), R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();
-                        }
-                        else if(error instanceof ServerError)
-                        {
-                            if(error.networkResponse.statusCode == 409) {
+                }
 
-                                Toast.makeText(getApplicationContext(),R.string.Oops, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        else if(error instanceof TimeoutError)
-                        {
-                            Toast.makeText(getApplicationContext(), R.string.timeout, Toast.LENGTH_LONG).show();
-                        }
+
+            }, new Response.ErrorListener() {
+
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    if (error instanceof ServerError) {
+                        Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                    } else if (error instanceof TimeoutError) {
+                        Toast.makeText(getApplicationContext(), R.string.timeout, Toast.LENGTH_LONG).show();
                     }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("id", id);
-                params.put("user_pass", password);
-                return params;
-            }
+                }
 
-        };
 
-        AnonApp.getInstance().addToReqQ(stringRequest);
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("id", uId);
+                    params.put("user_pass", android_id);
+                    return params;
+                }
+
+            };
+            AnonApp.getInstance().addToReqQ(postRequest);
+        }
+        else
+        {
+            String url = "http://192.168.10.27/user/posts?page=" + AnonApp.getInstance().getThisPage();
+            StringRequest postRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject obj = new JSONObject(response);
+                        JSONArray Jpost = null;
+                        Jpost = obj.getJSONArray("data");
+                        boolean exists = false;
+                        int loc = 0;
+
+                        for (int i = 0; i < Jpost.length(); i++) {
+
+                            JSONObject cPost = Jpost.getJSONObject(i);
+                            Post tempPost = new Post();
+                            tempPost.setPostTitle(cPost.getString("title"));
+                            if (cPost.getString("text").length() > 20) {
+                                tempPost.setPostBlurb(cPost.getString("text").substring(0, 20) + "...");
+                            } else tempPost.setPostBlurb(cPost.getString("text"));
+                            tempPost.setPostText(cPost.getString("text"));
+                            tempPost.setPostScore(cPost.getInt("votes"));
+                            tempPost.setPostDate(cPost.getString("created_at"));
+                            tempPost.setPostId(cPost.getInt("id"));
+                            postList.add(tempPost);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    loading = true;
+                    adapter.notifyDataSetChanged();
+
+                }
+
+
+            }, new Response.ErrorListener() {
+
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    //Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                    if (error instanceof ServerError) {
+                        Toast.makeText(getApplicationContext(), R.string.Oops, Toast.LENGTH_LONG).show();
+                    } else if (error instanceof TimeoutError) {
+                        Toast.makeText(getApplicationContext(), R.string.timeout, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("id", uId);
+                    params.put("user_pass", android_id);
+                    return params;
+                }
+
+            };
+            AnonApp.getInstance().addToReqQ(postRequest);
+        }
+
+
     }
 }

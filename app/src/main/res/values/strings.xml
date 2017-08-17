@@ -12,7 +12,6 @@
     <string name="no">No</string>
     <string name="retry">Retry</string>
     <string name="quit">Quit</string>
-    <string name="test">Test</string>
     <string name="next">Next</string>
     <string name="submit">Submit</string>
     <string name="comment">Comment</string>
@@ -20,7 +19,6 @@
     <string name="Filter">FILTER</string>
     <!-- error strings -->
     <string name="friendly_error">Uh-oh!</string>
-    <string name="no_connection">The servers might be down or you have no internet! lame :(</string>
     <string name="timeout">Could not find server, do you have internet?</string>
     <string name="post_cooldown">You\'re posting too fast! please wait a minute</string>
     <string name="post_requirements">Title must not be blank</string>
@@ -46,7 +44,6 @@
     <!--deletion -->
     <string name="deletePost">Delete Post?</string>
     <string name="deleteComment">Delete Comment?</string>
-    <string name="deleteUser">Delete Yourself?</string>
     <string name="notYours">Not your post</string>
     <string name="deleted">deleted</string>
     <!--Languages -->

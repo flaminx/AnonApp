@@ -12,7 +12,6 @@
     <string name="no">Nie</string>
     <string name="retry">Sprobuj jeszcze raz</string>
     <string name="quit">Porzuc</string>
-    <string name="test">Test</string>
     <string name="next">Nastepne</string>
     <string name="comment">Komentarz</string>
     <string name="submit">Zatwierdz</string>
@@ -20,7 +19,6 @@
     <string name="Filter">FILTR</string>
     <!-- error strings -->
     <string name="friendly_error">Ohh!</string>
-    <string name="no_connection">Moze serwer nie pracuje albo nie masz internetu!</string>
     <string name="timeout">Nie moge znalezc serwer czy masz internet?></string>
     <string name="post_cooldown">Ty wprowadzasz za szybko ,poczekaj chwile</string>
     <string name="post_requirements">Musisz wprowadzic tytul </string>
@@ -43,5 +41,15 @@
     <string name="PostTitleHint">Wprowadz tytul...</string>
     <string name="PostTextHint">Wprowadz tekst...</string>
     <string name="CommentHint">Odpowiedz...</string>
+    <!--deletion -->
+    <string name="deletePost">Delete Post?</string>
+    <string name="deleteComment">Delete Comment?</string>
+    <string name="notYours">Not your post</string>
+    <string name="deleted">deleted</string>
+    <string-array name="language_array">
+        <item>English</item>
+        <item>Polish</item>
+
+    </string-array>
 
 </resources>
