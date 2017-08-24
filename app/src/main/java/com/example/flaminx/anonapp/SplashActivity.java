@@ -149,13 +149,15 @@ public class SplashActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SplashActivity.this, error.toString(), Toast.LENGTH_LONG).show();
 
                         if (error instanceof AuthFailureError) {
                             Toast.makeText(SplashActivity.this, R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
 
                             Toast.makeText(SplashActivity.this, R.string.Oops, Toast.LENGTH_LONG).show();
+
+
                         } else if (error instanceof TimeoutError) {
 
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SplashActivity.this);
@@ -171,6 +173,7 @@ public class SplashActivity extends AppCompatActivity {
                                     registerUser();
                                 }
                             });
+
 
                             alertDialogBuilder.setNegativeButton(getString(R.string.quit), new DialogInterface.OnClickListener() {
                                 @Override

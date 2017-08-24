@@ -24,6 +24,7 @@
     <string name="post_requirements">Musisz wprowadzic tytul </string>
     <string name="ohMyGodThisShouldntHappen">Pomylka w danych.Sprobuj jeszcze raz</string>
     <string name="Oops">Oops! to nasza wina.Sprobuj pozniej</string>
+    <string name="voteTwice">You can\'t vote the same way twice!</string>
     <!-- Tutorial Text-->
     <string name="TutorialTitle">Witamy w Anon!</string>
     <string name="TutorialText1">Te instrukcje naucza Cie jak uzywac ta aplikacje</string>

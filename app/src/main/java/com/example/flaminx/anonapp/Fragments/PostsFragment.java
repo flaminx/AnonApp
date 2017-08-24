@@ -43,7 +43,7 @@ public class PostsFragment extends Fragment {
     private boolean loading = true;
     private int mPage;
     private String jsonResponse;
-    private int[] rbgArray = {211,211,214}; // colours for recycler items
+    private int[] rbgArray = {211, 211, 214}; // colours for recycler items
     private ArrayList<Post> postList = new ArrayList<Post>();
     private RecyclerView posts;
     private LinearLayoutManager postsLayout;
@@ -52,7 +52,7 @@ public class PostsFragment extends Fragment {
     private Toolbar postFilter;
     private Runnable runnable;
     private volatile boolean success;
-    private Thread refreshThread;
+
     public static PostsFragment newInstance(int page) {
         Bundle args = new Bundle();
         args.putInt(ARG_PAGE, page);
@@ -74,7 +74,6 @@ public class PostsFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_posts, container, false);
 
 
-
         //set up the RecyclerView
         postAdapter = new postsAdapter(postList);
         posts = (RecyclerView) view.findViewById(R.id.postList);
@@ -91,7 +90,7 @@ public class PostsFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                getPosts(postAdapter,true);
+                getPosts(postAdapter, true);
                 postRefresher.setRefreshing(false);
             }
         });
@@ -102,28 +101,24 @@ public class PostsFragment extends Fragment {
 
         //Detect when last post loaded and get more
 
-        posts.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
+        posts.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if(dy > 0) //check for scroll down
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) //check for scroll down
                 {
-                     int visibleItemCount = postsLayout.getChildCount();
+                    int visibleItemCount = postsLayout.getChildCount();
                     int totalItemCount = postsLayout.getItemCount();
                     int pastVisiblesItems = postsLayout.findFirstVisibleItemPosition();
                     int thisPage = AnonApp.getInstance().getThisPage();
                     int lastPage = AnonApp.getInstance().getLastpage();
 
-                    if (loading)
-                    {
-                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                        {
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                           if(thisPage < lastPage) {
-                               AnonApp.getInstance().setThisPage(thisPage + 1);
-                               getPosts(postAdapter, false);
-                           }
+                            if (thisPage < lastPage) {
+                                AnonApp.getInstance().setThisPage(thisPage + 1);
+                                getPosts(postAdapter, false);
+                            }
                         }
                     }
                 }
@@ -140,7 +135,7 @@ public class PostsFragment extends Fragment {
     }
 
 
-//update score when swiped left/right
+    //update score when swiped left/right
     private void setRecyclerViewItemTouchListener() {
         //1
         ItemTouchHelper.SimpleCallback itemTouchCallback = new ItemTouchHelper.SimpleCallback(2, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -162,22 +157,24 @@ public class PostsFragment extends Fragment {
                 }
                 viewHolder.itemView.setBackgroundColor(Color.parseColor("#d3d3d6"));
             }
+
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-                if(actionState!=ItemTouchHelper.ACTION_STATE_IDLE){
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
 
                     float limit = dX / 30;
-if(isCurrentlyActive) {
-    if (dX > 0) {
-        //rbgArray[0] += limit;
-        viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0]- Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] - Math.round(limit)));
-    } else if (dX < 0) {
-        //rbgArray[1] += limit;
-        viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] + Math.round(limit)));
-    }
-    //rgb(211,211,214)
-}
+                    if (isCurrentlyActive) {
+                        if (dX > 0) {
+                            //rbgArray[0] += limit;
+                            viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] - Math.round(limit)));
+                        } else if (dX < 0) {
+                            //rbgArray[1] += limit;
+                            viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] + Math.round(limit)));
+                        }
+                        //rgb(211,211,214)
+                    }
+                    else viewHolder.itemView.setBackgroundColor(Color.rgb(211, 211, 214));
                 }
             }
         };
@@ -189,8 +186,7 @@ if(isCurrentlyActive) {
     //Retrieve posts from server
     private void getPosts(final postsAdapter adapter, final boolean frontOrEnd) {
 
-        if(frontOrEnd)
-        {
+        if (frontOrEnd) {
             String url = "http://192.168.10.27:80/posts?page=1";
             postList.clear();
             adapter.notifyDataSetChanged();
@@ -247,9 +243,7 @@ if(isCurrentlyActive) {
 
             });
             AnonApp.getInstance().addToReqQ(postRequest);
-        }
-        else
-        {
+        } else {
             String url = "http://192.168.10.27:80/posts?page=" + AnonApp.getInstance().getThisPage();
             JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.GET, url,
                     null, new Response.Listener<JSONObject>() {
@@ -305,15 +299,6 @@ if(isCurrentlyActive) {
         }
 
 
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if(refreshThread != null) {
-            refreshThread.interrupt();
-        }
-        success = true;
     }
 
 }

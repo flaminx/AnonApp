@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.example.flaminx.anonapp.Middleware.Tutorial;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Flaminx on 05/03/2017.
@@ -84,7 +87,7 @@ public class OptionsFragment extends Fragment {
             }
         });
 
-        Spinner lSelect = (Spinner) view.findViewById(R.id.languageSelect);
+        final Spinner lSelect = (Spinner) view.findViewById(R.id.languageSelect);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.language_array, android.R.layout.simple_spinner_item);
 
@@ -160,7 +163,9 @@ lSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(context, R.string.deleted, Toast.LENGTH_LONG).show();
-
+                        SharedPreferences sPrefs = context.getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
+                        sPrefs.edit().putString("anon_login", "-1").apply();
+                        getActivity().finishAffinity();
                     }
                 },
                 new Response.ErrorListener() {
@@ -198,7 +203,6 @@ lSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 AnonApp.getInstance().addToReqQ(stringRequest);
-                getActivity().finishAffinity();
                 dialog.dismiss();
 
             }

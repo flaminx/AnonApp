@@ -83,8 +83,6 @@ public class UserFragment extends Fragment {
 
         if (isVisibleToUser) {
             uPointsUI.setText(Integer.toString(uPointsValue));
-            Toast toast = Toast.makeText(getActivity(),"Visible",Toast.LENGTH_SHORT);
-            toast.show();
             dynUiHandler.post(pointsUpdate);
         }
         else {

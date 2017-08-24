@@ -24,6 +24,7 @@
     <string name="post_requirements">Title must not be blank</string>
     <string name="ohMyGodThisShouldntHappen">Authentication Failure, please restart</string>
     <string name="Oops">Oops our bad, try again later</string>
+    <string name="voteTwice">You can\'t vote the same way twice!</string>
     <!-- Tutorial Text-->
     <string name="TutorialTitle">Welcome to Anon!</string>
     <string name="TutorialText1">This tutorial will get you up to speed with the app</string>
