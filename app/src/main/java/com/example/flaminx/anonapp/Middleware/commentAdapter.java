@@ -2,7 +2,6 @@ package com.example.flaminx.anonapp.Middleware;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -25,7 +24,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.flaminx.anonapp.AnonApp;
 import com.example.flaminx.anonapp.Pojo.Comment;
-import com.example.flaminx.anonapp.Pojo.Post;
 import com.example.flaminx.anonapp.R;
 
 import java.util.ArrayList;
@@ -70,15 +68,11 @@ public class commentAdapter extends RecyclerView.Adapter<commentAdapter.ViewHold
     public void addVote(int pos) {
         Comment rowComment = commentObject.get(pos);
         updateScore(rowComment, "1", pos);
-        //commentObject.remove(pos);
-        //commentObject.add(pos,rowComment);
     }
 
     public void removeVote(int pos) {
         Comment rowComment = commentObject.get(pos);
         updateScore(rowComment, "0", pos);
-        //commentObject.remove(pos);
-        //commentObject.add(pos,rowComment);
     }
 
     public void addAll(ArrayList<Comment> update) {

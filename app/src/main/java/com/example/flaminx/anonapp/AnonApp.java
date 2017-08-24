@@ -2,7 +2,6 @@ package com.example.flaminx.anonapp;
 
 import android.app.Application;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.text.TextUtils;
 
 import com.android.volley.Request;

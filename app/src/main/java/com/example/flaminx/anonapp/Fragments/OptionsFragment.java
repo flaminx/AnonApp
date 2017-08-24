@@ -1,6 +1,5 @@
 package com.example.flaminx.anonapp.Fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,7 +42,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class OptionsFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
-
     private int mPage;
 
     public static OptionsFragment newInstance(int page) {
@@ -73,7 +71,7 @@ public class OptionsFragment extends Fragment {
                 tutButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
 
-                        Tutorial t = new Tutorial(getActivity(),parent);
+                        Tutorial t = new Tutorial(getActivity(), parent);
                         t.beginTutorial();
 
                     }
@@ -86,15 +84,13 @@ public class OptionsFragment extends Fragment {
                 Delete(getContext());
             }
         });
-
         final Spinner lSelect = (Spinner) view.findViewById(R.id.languageSelect);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.language_array, android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         lSelect.setAdapter(adapter);
-        switch (AnonApp.getInstance().getLanguage())
-        {
+        switch (AnonApp.getInstance().getLanguage()) {
             case "en":
                 lSelect.setSelection(0);
                 break;
@@ -102,57 +98,45 @@ public class OptionsFragment extends Fragment {
                 lSelect.setSelection(1);
                 break;
         }
+        lSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Resources res = getContext().getResources();
+                Configuration config = new Configuration(res.getConfiguration());
+                String cLanguage = AnonApp.getInstance().getLanguage();
+                switch (position) {
+                    case 0: {
+                        if (!cLanguage.equals("en")) {
+                            AnonApp.getInstance().setLanguage("en");
+                            Intent refresh = new Intent(getContext(), MainActivity.class);
+                            getActivity().finish();
+                            startActivity(refresh);
+                            break;
+                        } else break;
+                    }
+                    case 1: {
+                        if (!cLanguage.equals("pl")) {
+                            AnonApp.getInstance().setLanguage("pl");
+                            Intent refresh = new Intent(getContext(), MainActivity.class);
+                            getActivity().finish();
+                            startActivity(refresh);
+                            break;
+                        } else break;
+                    }
 
-lSelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Resources res = getContext().getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        String cLanguage = AnonApp.getInstance().getLanguage();
-
-        switch (position) {
-
-            case 0:
-            {
-                if(!cLanguage.equals("en"))
-                {
-                    AnonApp.getInstance().setLanguage("en");
-                    Intent refresh = new Intent(getContext(), MainActivity.class);
-                    getActivity().finish();
-                    startActivity(refresh);
-                    break;
                 }
-                else break;
-            }
-            case 1:
-            {
-                if (!cLanguage.equals("pl"))
-                {
-                    AnonApp.getInstance().setLanguage("pl");
-                    Intent refresh = new Intent(getContext(), MainActivity.class);
-                    getActivity().finish();
-                    startActivity(refresh);
-                    break;
-                }
-                else break;
+
             }
 
-        }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-
-});
+            }
+        });
         return view;
     }
+
     public void Delete(final Context context) {
-
-
         final String password = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         final String id = AnonApp.getInstance().getUserId();

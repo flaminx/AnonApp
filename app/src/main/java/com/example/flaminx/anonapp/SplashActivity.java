@@ -42,53 +42,39 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Resources resources;
         Configuration configuration;
         DisplayMetrics displayMetrics;
-
         resources = this.getResources();
         configuration = resources.getConfiguration();
         displayMetrics = resources.getDisplayMetrics();
         String lan = AnonApp.getInstance().getLanguage();
         configuration.locale = new Locale(lan);
         resources.updateConfiguration(configuration, displayMetrics);
-
-
         android_id = Secure.getString(this.getContentResolver(),
                 Secure.ANDROID_ID);
-
         runstate = -1;
         setupApp();
     }
-
     private void setupApp() {
         int cVersion = BuildConfig.VERSION_CODE;
         SharedPreferences sPrefs = getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
         int oVersion = sPrefs.getInt("anon_version", -1);
-
-
         //Normal run
         if (cVersion == oVersion) {
-            Toast toast = Toast.makeText(this, "Normal Run", Toast.LENGTH_SHORT);
-            // toast.show();
+
             runstate = 0;
         } else if (oVersion == -1) {
-            Toast toast = Toast.makeText(this, "First Run", Toast.LENGTH_SHORT);
-            toast.show();
             runstate = 1;
         } else if (cVersion > oVersion) {
             runstate = 2;
         }
         sPrefs.edit().putInt("anon_version", cVersion).apply();
         if (oVersion == -1) {
-
             String[] languages = getResources().getStringArray(R.array.language_array);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SplashActivity.this);
             alertDialogBuilder.setTitle("Language");
-
             alertDialogBuilder.setCancelable(false);
-
             alertDialogBuilder.setSingleChoiceItems(languages, -1, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -105,22 +91,16 @@ public class SplashActivity extends AppCompatActivity {
                     registerUser();
                 }
             });
-
-
             AlertDialog dialog = alertDialogBuilder.create();
             dialog.show();
-        }
-        else registerUser();
+        } else registerUser();
     }
 
     private void registerUser() {
         SharedPreferences sPrefs = getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
-
         final String id = sPrefs.getString("anon_login", "-1");
         final String password = android_id;
-        final String REGISTER_URL = AnonApp.getInstance().getWebAddress() +"/users";
-
-
+        final String REGISTER_URL = AnonApp.getInstance().getWebAddress() + "/users";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -134,13 +114,10 @@ public class SplashActivity extends AppCompatActivity {
                             AnonApp.getInstance().setUserId(uId);
                             SharedPreferences sPrefs = getSharedPreferences("com.example.flaminx.anonapp", MODE_PRIVATE);
                             sPrefs.edit().putString("anon_login", uId).apply();
-                            Toast toast = Toast.makeText(SplashActivity.this, uScore, Toast.LENGTH_SHORT);
-                            toast.show();
                             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                             intent.putExtra("runstate", runstate);
                             startActivity(intent);
                             finish();
-
                         } catch (JSONException e) {
                             Toast.makeText(SplashActivity.this, R.string.Oops, Toast.LENGTH_LONG).show();
                         }
@@ -154,18 +131,13 @@ public class SplashActivity extends AppCompatActivity {
                         if (error instanceof AuthFailureError) {
                             Toast.makeText(SplashActivity.this, R.string.ohMyGodThisShouldntHappen, Toast.LENGTH_LONG).show();
                         } else if (error instanceof ServerError) {
-
                             Toast.makeText(SplashActivity.this, R.string.Oops, Toast.LENGTH_LONG).show();
-
-
                         } else if (error instanceof TimeoutError) {
 
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SplashActivity.this);
                             alertDialogBuilder.setTitle(getString(R.string.friendly_error));
-                            alertDialogBuilder.setMessage("The Servers are down my dude");
+                            alertDialogBuilder.setMessage(R.string.timeout);
                             alertDialogBuilder.setCancelable(false);
-
-
                             alertDialogBuilder.setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -183,12 +155,9 @@ public class SplashActivity extends AppCompatActivity {
                                     System.exit(0);
                                 }
                             });
-
                             AlertDialog dialog = alertDialogBuilder.create();
                             dialog.show();
                         }
-
-
                     }
                 }) {
             @Override
@@ -196,14 +165,10 @@ public class SplashActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("id", id);
                 params.put("user_pass", password);
-
                 return params;
             }
 
         };
-
         AnonApp.getInstance().addToReqQ(stringRequest);
-
     }
-
 }

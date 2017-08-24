@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,6 @@ public class PostsFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
     private boolean loading = true;
     private int mPage;
-    private String jsonResponse;
     private int[] rbgArray = {211, 211, 214}; // colours for recycler items
     private ArrayList<Post> postList = new ArrayList<Post>();
     private RecyclerView posts;
@@ -50,8 +48,6 @@ public class PostsFragment extends Fragment {
     private postsAdapter postAdapter;
     private SwipeRefreshLayout postRefresher;
     private Toolbar postFilter;
-    private Runnable runnable;
-    private volatile boolean success;
 
     public static PostsFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -72,7 +68,6 @@ public class PostsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_posts, container, false);
-
 
         //set up the RecyclerView
         postAdapter = new postsAdapter(postList);
@@ -100,7 +95,6 @@ public class PostsFragment extends Fragment {
         getPosts(postAdapter, true);
 
         //Detect when last post loaded and get more
-
         posts.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -125,7 +119,6 @@ public class PostsFragment extends Fragment {
 
             }
         });
-
         return view;
     }
 
@@ -133,8 +126,6 @@ public class PostsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
-
-
     //update score when swiped left/right
     private void setRecyclerViewItemTouchListener() {
         //1
@@ -166,13 +157,10 @@ public class PostsFragment extends Fragment {
                     float limit = dX / 30;
                     if (isCurrentlyActive) {
                         if (dX > 0) {
-                            //rbgArray[0] += limit;
                             viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] - Math.round(limit)));
                         } else if (dX < 0) {
-                            //rbgArray[1] += limit;
                             viewHolder.itemView.setBackgroundColor(Color.rgb(rbgArray[0] - Math.round(limit), rbgArray[1] + Math.round(limit), rbgArray[2] + Math.round(limit)));
                         }
-                        //rgb(211,211,214)
                     }
                     else viewHolder.itemView.setBackgroundColor(Color.rgb(211, 211, 214));
                 }
@@ -200,9 +188,6 @@ public class PostsFragment extends Fragment {
                         AnonApp.getInstance().setThisPage(response.getInt("current_page"));
                         JSONArray Jpost = null;
                         Jpost = response.getJSONArray("data");
-                        boolean exists = false;
-                        int loc = 0;
-
                         for (int i = 0; i < Jpost.length(); i++) {
 
                             JSONObject cPost = Jpost.getJSONObject(i);
@@ -253,9 +238,6 @@ public class PostsFragment extends Fragment {
                     try {
                         JSONArray Jpost = null;
                         Jpost = response.getJSONArray("data");
-                        boolean exists = false;
-                        int loc = 0;
-
                         for (int i = 0; i < Jpost.length(); i++) {
 
                             JSONObject cPost = Jpost.getJSONObject(i);
